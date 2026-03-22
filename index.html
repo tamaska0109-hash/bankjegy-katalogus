@@ -132,15 +132,15 @@ const banknotes = [
     name: "100 Forint",
     country: "Hungary",
     year: 1990,
-    condition: "AUNC",
+    condition: "UNC",
     baseValue: 5000,
     img: "IDE_A_LINKED"
   },
   {
     name: "1 Dollar",
     country: "USA",
-    condition: "XF",
     year: 2010,
+    condition: "XF",
     baseValue: 10,
     img: "https://via.placeholder.com/300x150"
   },
@@ -154,9 +154,9 @@ const banknotes = [
   }
 ];
 
-const searchInput = document.getElementById("search");
 const container = document.querySelector(".container");
-  
+const searchInput = document.getElementById("search");
+
 function calculateValue(note) {
   let multiplier = 1;
 
@@ -168,26 +168,24 @@ function calculateValue(note) {
   else if (note.condition === "VG") multiplier = 1;
   else if (note.condition === "G") multiplier = 0.8;
 
-   return note.baseValue * multiplier;
+  return note.baseValue * multiplier;
 }
-  
-function updateCollectionValue() {
-  let total = 0;
 
-  banknotes.forEach(note => {
-    total += calculateValue(note);
+function getFilteredBanknotes() {
+  const country = document.getElementById("countryFilter").value;
+  const condition = document.getElementById("conditionFilter").value;
+
+  return banknotes.filter(note => {
+    if (country && note.country !== country) return false;
+    if (condition && note.condition !== condition) return false;
+    return true;
   });
+}
 
-  document.getElementById("totalValue").innerText = total;
-} 
-  
 function renderBanknotes() {
   container.innerHTML = "";
 
   const filtered = getFilteredBanknotes();
-
-  // DEBUG (ne töröld még!)
-  console.log("Filtered:", filtered);
 
   filtered.forEach(note => {
     const card = document.createElement("div");
@@ -208,25 +206,21 @@ function renderBanknotes() {
   updateCollectionValue();
   findTopNote();
   calculateCountryValues();
+}
 
-searchInput.addEventListener("keyup", function() {
-  const value = this.value.toLowerCase();
-  const cards = document.querySelectorAll(".card");
+function updateCollectionValue() {
+  let total = 0;
+  banknotes.forEach(note => total += calculateValue(note));
+  document.getElementById("totalValue").innerText = total;
+}
 
-  cards.forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(value)
-      ? "block"
-      : "none";
-  });
-});
-  
-  function findTopNote() {
-    if (banknotes.lenght === 0) return;
-    
-  let top = null;
+function findTopNote() {
+  if (banknotes.length === 0) return;
+
+  let top = banknotes[0];
 
   banknotes.forEach(note => {
-    if (!top || calculateValue(note) > calculateValue(top)) {
+    if (calculateValue(note) > calculateValue(top)) {
       top = note;
     }
   });
@@ -234,71 +228,42 @@ searchInput.addEventListener("keyup", function() {
   document.getElementById("topNote").innerText =
     top.name + " (" + calculateValue(top) + " €)";
 }
-});
-  
-  function calculateCountryValues() {
-  let countryTotals = {};
 
-  getFilteredBanknotes().forEach(note => {
+function calculateCountryValues() {
+  let totals = {};
+
+  banknotes.forEach(note => {
     const value = calculateValue(note);
-
-    if (!countryTotals[note.country]) {
-      countryTotals[note.country] = 0;
-    }
-
-    countryTotals[note.country] += value;
+    totals[note.country] = (totals[note.country] || 0) + value;
   });
 
-  const container = document.getElementById("countryValues");
-  container.innerHTML = "";
+  const el = document.getElementById("countryValues");
+  el.innerHTML = "";
 
-  for (let country in countryTotals) {
+  for (let c in totals) {
     const p = document.createElement("p");
-    p.innerText = country + ": " + countryTotals[country] + " €";
-    container.appendChild(p);
+    p.innerText = c + ": " + totals[c] + " €";
+    el.appendChild(p);
   }
 }
-  
+
 function sortByValue() {
   banknotes.sort((a, b) => calculateValue(b) - calculateValue(a));
   renderBanknotes();
 }
-  
+
 function sortByYear() {
   banknotes.sort((a, b) => b.year - a.year);
   renderBanknotes();
-} 
-
-function getFilteredBanknotes() {
-  const country = document.getElementById("countryFilter").value;
-  const condition = document.getElementById("conditionFilter").value;
-
-  return banknotes.filter(note => {
-    if (country && note.country !== country) return false;
-    if (condition && note.condition !== condition) return false;
-    return true;
-  });
 }
 
-document.getElementById("countryFilter").addEventListener("change", () => {
-  renderBanknotes();
-  calculateCountryValues();
-});
+searchInput.addEventListener("keyup", renderBanknotes);
 
-document.getElementById("yearFilter").addEventListener("change", () => {
-  renderBanknotes();
-  calculateCountryValues();
-});
+document.getElementById("countryFilter").addEventListener("change", renderBanknotes);
+document.getElementById("conditionFilter").addEventListener("change", renderBanknotes);
 
-document.getElementById("conditionFilter").addEventListener("change", () => {
-  renderBanknotes();
-  calculateCountryValues();
-});
+document.addEventListener("DOMContentLoaded", renderBanknotes);
 
-document.addEventListener("DOMContentLoaded", function() {
-  renderBanknotes();
-  });
-  
 </script>
 </body>
 </html>
