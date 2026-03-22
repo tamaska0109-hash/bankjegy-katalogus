@@ -324,22 +324,37 @@ initMap();
   function updateMap() {
   if (!map) return;
 
+  // régi körök törlése
+  map.eachLayer(layer => {
+    if (layer instanceof L.Circle) {
+      map.removeLayer(layer);
+    }
+  });
+
+  const countryCount = {};
+
+  // összesítés
   banknotes.forEach(note => {
     if (!note.country) return;
+    countryCount[note.country] = (countryCount[note.country] || 0) + 1;
+  });
 
-    const coords = {
-      "Magyarország": [47, 19],
-      "Ausztria": [48.2, 16.3],
-      "Németország": [51, 10],
-      "USA": [37, -95]
-    };
+  const coords = {
+    "Magyarország": [47, 19],
+    "Ausztria": [48.2, 16.3],
+    "Németország": [51, 10],
+    "USA": [37, -95]
+  };
 
-    if (coords[note.country]) {
-      L.circle(coords[note.country], {
-        color: 'gold',
-        radius: 200000
-      }).addTo(map);
-    }
+  Object.keys(countryCount).forEach(country => {
+    if (!coords[country]) return;
+
+    L.circle(coords[country], {
+      color: 'gold',
+      radius: 200000 + countryCount[country] * 80000
+    })
+    .addTo(map)
+    .bindPopup(`${country}: ${countryCount[country]} db`);
   });
 }
      
