@@ -6,6 +6,54 @@
 <title>Tamás Gyűjtemény</title>
 
   <style>
+
+.top-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.top-bar input {
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+}
+
+.top-bar button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-box {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  width: 250px;
+  margin: 0 auto 30px auto;
+}
+
+.add-box input,
+.add-box select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+}
+
+.add-box button {
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  background: gold;
+  cursor: pointer;
+}
+    
 body {
   font-family: Arial;
   background: #111;
@@ -42,31 +90,28 @@ img {
 
     <div id="totalValue"></div>
 
-   <div id="addForm">
-     <hr>
+   <div class="top-bar">
+  <input id="filterCountry" placeholder="Ország">
+  <input id="filterYear" placeholder="Év">
+  <button onclick="applyFilter()">Szűrés</button>
+  <button onclick="resetFilter()">Reset</button>
+</div>
 
-<input id="filterCountry" placeholder="Szűrés országra">
-<input id="filterYear" placeholder="Szűrés évre">
-<button onclick="applyFilter()">Szűrés</button>
-<button onclick="resetFilter()">Reset</button>
-     
-     
-  <input id="nameInput" placeholder="Név"><br>
-  <input id="countryInput" placeholder="Ország"><br>
-  <input id="yearInput" placeholder="Év"><br>
+<div class="add-box">
+  <h2>➕ Új bankjegy</h2>
 
-<select id="conditionInput">
-  <option value="UNC">UNC (Uncirculated)</option>
-  <option value="AU">AU (About Uncirculated)</option>
-  <option value="XF">XF (Extremely Fine)</option>
-  <option value="VF">VF (Very Fine)</option>
-  <option value="F">Fine</option>
-  <option value="VG">Very Good</option>
-  <option value="G">Good</option>
-</select><br>
-     
-  <input id="valueInput" placeholder="Érték"><br>
-  <input id="imgInput" placeholder="Kép link"><br>
+  <input id="nameInput" placeholder="Név">
+  <input id="countryInput" placeholder="Ország">
+  <input id="yearInput" placeholder="Év">
+  <select id="conditionInput">
+    <option value="UNC">UNC</option>
+    <option value="AU">AU</option>
+    <option value="XF">XF</option>
+    <option value="VF">VF</option>
+  </select>
+  <input id="valueInput" placeholder="Érték (€)">
+  <input id="imgInput" placeholder="Kép link">
+
   <button onclick="addBanknote()">Hozzáadás</button>
 </div>
 
