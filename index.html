@@ -302,6 +302,18 @@ loadBanknotes();
   document.getElementById("totalValue").innerText =
     "Összérték: " + total + " €";
 }   
+
+let map;
+
+function initMap() {
+  map = L.map('map').setView([20, 0], 2);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+}
+
+initMap();
      
 </script>
 
