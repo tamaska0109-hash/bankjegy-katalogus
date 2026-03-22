@@ -140,21 +140,6 @@ async function deleteNote(id) {
 // 🚀 Indítás
 loadBanknotes();
 
- async function loadBanknotes() {
-  const { data, error } = await supabase
-    .from("banknotes")
-    .select("*");
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  banknotes = data || [];
-
-  renderBanknotes();
-}    
-
      
 </script>
 
