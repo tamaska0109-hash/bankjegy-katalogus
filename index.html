@@ -85,6 +85,19 @@ img {
   display: inline-block;
   width: 200px;
 }
+
+#addForm {
+  background: #222;
+  padding: 15px;
+  margin: 20px;
+  border-radius: 10px;
+}
+
+#addForm input, #addForm select {
+  margin: 5px;
+  padding: 8px;
+  width: 200px;
+}
     
 </style>
 </head>
@@ -106,6 +119,29 @@ img {
 </div> 
  
 <canvas id="valueChart" width="400" height="200"></canvas> 
+
+<div id="addForm">
+  <h3>➕ Új bankjegy hozzáadása</h3>
+
+  <input id="nameInput" placeholder="Név"><br>
+  <input id="countryInput" placeholder="Ország"><br>
+  <input id="yearInput" type="number" placeholder="Év"><br>
+  
+  <select id="conditionInput">
+    <option value="UNC">UNC</option>
+    <option value="AUNC">AUNC</option>
+    <option value="XF">XF</option>
+    <option value="VF">VF</option>
+    <option value="F">F</option>
+    <option value="VG">VG</option>
+    <option value="G">G</option>
+  </select><br>
+
+  <input id="valueInput" type="number" placeholder="Alap érték"><br>
+  <input id="imgInput" placeholder="Kép link"><br>
+
+  <button onclick="addBanknote()">Hozzáadás</button>
+</div>  
 
 <div id="topListBox">
   <h2 style="color: gold;">🏆 Top 10 legértékesebb bankjegy</h2>
@@ -228,6 +264,20 @@ function renderTopList() {
   });
 }
   
+function addBanknote() {
+  const note = {
+    name: document.getElementById("nameInput").value,
+    country: document.getElementById("countryInput").value,
+    year: parseInt(document.getElementById("yearInput").value),
+    condition: document.getElementById("conditionInput").value,
+    baseValue: parseFloat(document.getElementById("valueInput").value),
+    img: document.getElementById("imgInput").value
+  };
+
+  banknotes.push(note);
+
+  renderBanknotes();
+}
   
 function getFilteredBanknotes() {
   const country = document.getElementById("countryFilter").value;
