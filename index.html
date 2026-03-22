@@ -219,6 +219,8 @@ document.addEventListener("DOMContentLoaded", function() {
   updateCollectionValue();
   findTopNote();
   calculateCountryValues();
+  });
+  
   function findTopNote() {
   let top = null;
 
@@ -278,9 +280,20 @@ function sortByYear() {
   });
 }
 
-document.getElementById("countryFilter").addEventListener("change", renderBanknotes);
-document.getElementById("yearFilter").addEventListener("change", renderBanknotes);
-document.getElementById("conditionFilter").addEventListener("change", renderBanknotes);
+document.getElementById("countryFilter").addEventListener("change", () => {
+  renderBanknotes();
+  calculateCountryValues();
+});
+
+document.getElementById("yearFilter").addEventListener("change", () => {
+  renderBanknotes();
+  calculateCountryValues();
+});
+
+document.getElementById("conditionFilter").addEventListener("change", () => {
+  renderBanknotes();
+  calculateCountryValues();
+});
   
 </script>
 </body>
