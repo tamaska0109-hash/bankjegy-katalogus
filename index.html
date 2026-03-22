@@ -227,6 +227,7 @@ function renderBanknotes() {
     container.appendChild(div);
   });
   updateTotal();
+  updateMap();
 }
 
 // ➕ Hozzáadás
@@ -319,6 +320,28 @@ function initMap() {
 }
 
 initMap();
+
+  function updateMap() {
+  if (!map) return;
+
+  banknotes.forEach(note => {
+    if (!note.country) return;
+
+    const coords = {
+      "Magyarország": [47, 19],
+      "Ausztria": [48.2, 16.3],
+      "Németország": [51, 10],
+      "USA": [37, -95]
+    };
+
+    if (coords[note.country]) {
+      L.circle(coords[note.country], {
+        color: 'gold',
+        radius: 200000
+      }).addTo(map);
+    }
+  });
+}
      
 </script>
 
