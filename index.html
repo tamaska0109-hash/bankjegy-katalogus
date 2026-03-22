@@ -184,7 +184,12 @@ function updateCollectionValue() {
 function renderBanknotes() {
   container.innerHTML = "";
 
-  banknotes.forEach(note => {
+  const filtered = getFilteredBanknotes();
+
+  // DEBUG (ne töröld még!)
+  console.log("Filtered:", filtered);
+
+  filtered.forEach(note => {
     const card = document.createElement("div");
     card.className = "card";
 
@@ -199,11 +204,10 @@ function renderBanknotes() {
 
     container.appendChild(card);
   });
-  
-updateCollectionValue();
-findTopNote();
-calculateCountryValues();
-}
+
+  updateCollectionValue();
+  findTopNote();
+  calculateCountryValues();
 
 searchInput.addEventListener("keyup", function() {
   const value = this.value.toLowerCase();
