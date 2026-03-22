@@ -102,22 +102,6 @@ function renderBanknotes() {
   });
 }
 
-// ☁️ Betöltés
-async function loadBanknotes() {
-  const querySnapshot = await getDocs(collection(db, "banknotes"));
-
-  banknotes = [];
-
-  querySnapshot.forEach((docu) => {
-    banknotes.push({
-      id: docu.id,
-      ...docu.data()
-    });
-  });
-
-  renderBanknotes();
-}
-
 // ➕ Hozzáadás
 window.addBanknote = async function () {
   const note = {
@@ -184,6 +168,8 @@ window.resetFilter = function () {
   renderBanknotes();
 };
 
+loadBanknotes();
+     
 </script>
 
  </body>
