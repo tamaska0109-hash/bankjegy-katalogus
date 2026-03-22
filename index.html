@@ -188,9 +188,9 @@ img {
  const saved = localStorage.getItem("banknotes");
 
 if (saved) {
+  banknotes.length = 0; //
   banknotes.push(...JSON.parse(saved));
-} 
-
+}
 const banknotes = [
   {
     name: "100 Forint",
