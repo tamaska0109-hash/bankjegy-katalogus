@@ -205,7 +205,7 @@ function calculateValue(note) {
 }
 
 function renderTopList() {
-  const sorted = [...banknotes].sort(
+  const sorted = [...getFilteredBanknotes()].sort(
     (a, b) => calculateValue(b) - calculateValue(a)
   );
 
@@ -218,11 +218,11 @@ function renderTopList() {
     const div = document.createElement("div");
     div.className = "card";
 
-    div.innerHTML = `
-      <h4>${note.name}</h4>
-      <img src="${note.img}">
-      <p>${calculateValue(note)} €</p>
-    `;
+   div.innerHTML = `
+  <h4>${note.name}</h4>
+  <img src="${note.img || 'https://via.placeholder.com/150'}">
+  <p>💰 ${calculateValue(note)} €</p>
+`;
 
     container.appendChild(div);
   });
