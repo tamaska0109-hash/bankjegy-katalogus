@@ -48,6 +48,14 @@ img {
   margin: 20px;
   font-size: 22px;
   border-radius: 10px;
+} 
+#topNoteBox {
+  background: #333;
+  color: gold;
+  padding: 15px;
+  margin: 20px;
+  font-size: 20px;
+  border-radius: 10px;
 }    
 </style>
 </head>
@@ -57,6 +65,9 @@ img {
 <h1>💰 Tamás Bankjegy Gyűjtemény</h1>
 <div id="collectionValueBox">
   Teljes gyűjtemény értéke: <span id="totalValue">0</span> €
+</div>
+  <div id="topNoteBox">
+  Legértékesebb bankjegy: <span id="topNote"></span>
 </div>
 <input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
 
@@ -143,6 +154,19 @@ searchInput.addEventListener("keyup", function() {
 document.addEventListener("DOMContentLoaded", function() {
   renderBanknotes();
   updateCollectionValue();
+  findTopNote();
+  function findTopNote() {
+  let top = null;
+
+  banknotes.forEach(note => {
+    if (!top || calculateValue(note) > calculateValue(top)) {
+      top = note;
+    }
+  });
+
+  document.getElementById("topNote").innerText =
+    top.name + " (" + calculateValue(top) + " €)";
+}
 });
 </script>
 </body>
