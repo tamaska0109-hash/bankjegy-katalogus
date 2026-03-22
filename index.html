@@ -138,7 +138,7 @@ img {
   </select><br>
 
   <input id="valueInput" type="number" placeholder="Alap érték"><br>
-  <input id="imgInput" placeholder="Kép link"><br>
+  <input id="imgInput" type="file" accept="image/*">
 
   <button onclick="addBanknote()">Hozzáadás</button>
 </div>  
@@ -271,20 +271,30 @@ function renderTopList() {
 }
   
 function addBanknote() {
-  const note = {
-    name: document.getElementById("nameInput").value,
-    country: document.getElementById("countryInput").value,
-    year: parseInt(document.getElementById("yearInput").value),
-    condition: document.getElementById("conditionInput").value,
-    baseValue: parseFloat(document.getElementById("valueInput").value),
-    img: document.getElementById("imgInput").value
+  const file = document.getElementById("imgInput").files[0];
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const note = {
+      name: document.getElementById("nameInput").value,
+      country: document.getElementById("countryInput").value,
+      year: parseInt(document.getElementById("yearInput").value),
+      condition: document.getElementById("conditionInput").value,
+      baseValue: parseFloat(document.getElementById("valueInput").value),
+      img: e.target.result // 👈 EZ A KÉP!
+    };
+
+    banknotes.push(note);
+
+    localStorage.setItem("banknotes", JSON.stringify(banknotes));
+
+    renderBanknotes();
   };
 
-  banknotes.push(note);
-
- localStorage.setItem("banknotes", JSON.stringify(banknotes)); 
-
-  renderBanknotes();
+  if (file) {
+    reader.readAsDataURL(file);
+  }
 }
   
 function getFilteredBanknotes() {
