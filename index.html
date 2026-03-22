@@ -53,19 +53,27 @@ img {
 
   <div class="container"></div>
 
-   <script>
+   <script type="module">
 
-     if (!window.supabaseClient) {
-  window.supabaseClient = window.supabase.createClient(
-    "https://fqhhzagiwdvbclcuhztmb.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaGh6YWdpd2R2YmxjdWh6dG1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDMwMjUsImV4cCI6MjA4OTY3OTAyNX0.w1MRyD-YRalYYu_PpPfSRvC0BbmhWkoYCgUBOvzsHOQ"
-  );
-}
+// 🔥 Firebase import
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const supabase = window.supabaseClient;
+// 🔑 SAJÁT CONFIG (EZ A TIÉD)
+const firebaseConfig = {
+  apiKey: "AIzaSyDupwhLiT13blp-UtOCy4A57337sQQuHLw",
+  authDomain: "bankjegy-2c60b.firebaseapp.com",
+  projectId: "bankjegy-2c60b",
+  storageBucket: "bankjegy-2c60b.firebasestorage.app",
+  messagingSenderId: "460307693292",
+  appId: "1:460307693292:web:7960652c96dbdc1a9d2fc9"
+};
+
+// 🚀 Init
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let banknotes = [];
-
 const container = document.querySelector(".container");
 
 // 🔄 Megjelenítés
@@ -87,23 +95,24 @@ function renderBanknotes() {
   });
 }
 
-// ☁️ Betöltés Supabase-ből
+// ☁️ Betöltés
 async function loadBanknotes() {
-  const { data, error } = await supabase
-    .from("banknotes")
-    .select("*");
+  const querySnapshot = await getDocs(collection(db, "banknotes"));
 
-  if (error) {
-    console.error("Betöltési hiba:", error);
-    return;
-  }
+  banknotes = [];
 
-  banknotes = data || [];
+  querySnapshot.forEach((docu) => {
+    banknotes.push({
+      id: docu.id,
+      ...docu.data()
+    });
+  });
+
   renderBanknotes();
 }
 
 // ➕ Hozzáadás
-async function addBanknote() {
+window.addBanknote = async function () {
   const note = {
     name: document.getElementById("nameInput").value,
     country: document.getElementById("countryInput").value,
@@ -113,38 +122,20 @@ async function addBanknote() {
     img: document.getElementById("imgInput").value
   };
 
-  const { error } = await supabase
-    .from("banknotes")
-    .insert([note]);
-
-  if (error) {
-    console.error("Mentési hiba:", error);
-    alert("Hiba mentéskor!");
-    return;
-  }
+  await addDoc(collection(db, "banknotes"), note);
 
   loadBanknotes();
-}
+};
 
 // 🗑️ Törlés
-async function deleteNote(id) {
-  const { error } = await supabase
-    .from("banknotes")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Törlési hiba:", error);
-    return;
-  }
-
+window.deleteNote = async function (id) {
+  await deleteDoc(doc(db, "banknotes", id));
   loadBanknotes();
-}
+};
 
 // 🚀 Indítás
 loadBanknotes();
 
-     
 </script>
 
  </body>
