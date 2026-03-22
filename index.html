@@ -84,6 +84,9 @@ img {
   
 <input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
 
+<button onclick="sortByValue()">Rendezés érték szerint</button>
+<button onclick="sortByYear()">Rendezés év szerint</button> 
+  
 <div class="container"></div>
 <script>
 
@@ -91,6 +94,7 @@ const banknotes = [
   {
     name: "100 Forint",
     country: "Hungary",
+    year: 1990,
     condition: "VF",
     baseValue: 5000,
     img: "IDE_A_LINKED"
@@ -99,12 +103,14 @@ const banknotes = [
     name: "1 Dollar",
     country: "USA",
     condition: "XF",
+    year: 2010,
     baseValue: 10,
     img: "https://via.placeholder.com/300x150"
   },
   {
     name: "1 Korona",
     country: "Austria",
+    year: 1920
     condition: "UNC",
     baseValue: 20,
     img: "https://pub-a2501e448e5b4181b6769dfb2e007129.r2.dev/bankjegyek/1_Korona_e..jpg"
@@ -147,6 +153,7 @@ function renderBanknotes() {
       <p>Ország: ${note.country}</p>
       <p>Állapot: ${note.condition}</p>
       <p>Érték: ${calculateValue(note)} €</p>
+      <p>Év: ${note.year}</p>
     `;
 
     container.appendChild(card);
@@ -205,6 +212,17 @@ document.addEventListener("DOMContentLoaded", function() {
     container.appendChild(p);
   }
 }
+  
+function sortByValue() {
+  banknotes.sort((a, b) => calculateValue(b) - calculateValue(a));
+  renderBanknotes();
+}
+  
+function sortByYear() {
+  banknotes.sort((a, b) => b.year - a.year);
+  renderBanknotes();
+} 
+  
 </script>
 </body>
 </html>
