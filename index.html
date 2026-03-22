@@ -228,6 +228,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   
   function findTopNote() {
+    if (banknotes.lenght === 0) return;
+    
   let top = null;
 
   banknotes.forEach(note => {
@@ -276,12 +278,10 @@ function sortByYear() {
 
   function getFilteredBanknotes() {
   const country = document.getElementById("countryFilter").value;
-  const year = document.getElementById("yearFilter").value;
   const condition = document.getElementById("conditionFilter").value;
 
   return banknotes.filter(note => {
     return (!country || note.country === country) &&
-           (!year || note.year == year) &&
            (!condition || note.condition === condition);
   });
 }
