@@ -32,6 +32,8 @@ img {
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  
   </head>
 
   <body>
@@ -52,6 +54,13 @@ img {
   <div class="container"></div>
 
    <script>
+
+     const supabase = window.supabase.createClient(
+  "https://fqhhzagiwdvbclcuhztmb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaGh6YWdpd2R2YmxjdWh6dG1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDMwMjUsImV4cCI6MjA4OTY3OTAyNX0.w1MRyD-YRalYYu_PpPfSRvC0BbmhWkoYCgUBOvzsHOQ"
+);
+
+let banknotes = [];
 
      let banknotes = JSON.parse(localStorage.getItem("banknotes")) || [
   {
@@ -80,23 +89,45 @@ function renderBanknotes() {
   });
 }
 
-function addBanknote() {
+   async function addBanknote() {
   const note = {
     name: document.getElementById("nameInput").value,
     country: document.getElementById("countryInput").value,
-    year: document.getElementById("yearInput").value,
-    value: document.getElementById("valueInput").value,
+    year: parseInt(document.getElementById("yearInput").value),
+    condition: "UNC",
+    value: parseFloat(document.getElementById("valueInput").value),
     img: document.getElementById("imgInput").value
   };
 
-  banknotes.push(note);
+  const { error } = await supabase
+    .from("banknotes")
+    .insert([note]);
 
-  localStorage.setItem("banknotes", JSON.stringify(banknotes));
+  if (error) {
+    console.error(error);
+    alert("Hiba történt!");
+    return;
+  }
+
+  loadBanknotes();
+}  
+
+ async function loadBanknotes() {
+  const { data, error } = await supabase
+    .from("banknotes")
+    .select("*");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  banknotes = data || [];
 
   renderBanknotes();
-}
+}    
 
-renderBanknotes();
+loadBanknotes();
      
 </script>
 
