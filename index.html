@@ -63,6 +63,17 @@ img {
   margin: 20px;
   border-radius: 10px;
 }    
+
+ #filters {
+  margin: 20px;
+}
+
+#filters select {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+}   
+    
 </style>
 </head>
 <body>
@@ -86,6 +97,30 @@ img {
 
 <button onclick="sortByValue()">Rendezés érték szerint</button>
 <button onclick="sortByYear()">Rendezés év szerint</button> 
+
+<div id="filters">
+
+  <select id="countryFilter">
+    <option value="">Összes ország</option>
+    <option value="Hungary">Hungary</option>
+    <option value="USA">USA</option>
+    <option value="Austria">Austria</option>
+  </select>
+
+  <select id="yearFilter">
+    <option value="">Összes év</option>
+    <option value="1990">1990</option>
+    <option value="2000">2000</option>
+  </select>
+
+  <select id="conditionFilter">
+    <option value="">Minden állapot</option>
+    <option value="UNC">UNC</option>
+    <option value="XF">XF</option>
+    <option value="VF">VF</option>
+  </select>
+
+</div>  
   
 <div class="container"></div>
 <script>
@@ -193,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function calculateCountryValues() {
   let countryTotals = {};
 
-  banknotes.forEach(note => {
+  getFilteredBanknotes().forEach(note => {
     const value = calculateValue(note);
 
     if (!countryTotals[note.country]) {
@@ -222,6 +257,22 @@ function sortByYear() {
   banknotes.sort((a, b) => b.year - a.year);
   renderBanknotes();
 } 
+
+  function getFilteredBanknotes() {
+  const country = document.getElementById("countryFilter").value;
+  const year = document.getElementById("yearFilter").value;
+  const condition = document.getElementById("conditionFilter").value;
+
+  return banknotes.filter(note => {
+    return (!country || note.country === country) &&
+           (!year || note.year == year) &&
+           (!condition || note.condition === condition);
+  });
+}
+
+document.getElementById("countryFilter").addEventListener("change", renderBanknotes);
+document.getElementById("yearFilter").addEventListener("change", renderBanknotes);
+document.getElementById("conditionFilter").addEventListener("change", renderBanknotes);
   
 </script>
 </body>
