@@ -219,10 +219,6 @@ searchInput.addEventListener("keyup", function() {
       : "none";
   });
 });
-
-document.addEventListener("DOMContentLoaded", function() {
-  renderBanknotes();
-  });
   
   function findTopNote() {
     if (banknotes.lenght === 0) return;
@@ -298,6 +294,10 @@ document.getElementById("conditionFilter").addEventListener("change", () => {
   renderBanknotes();
   calculateCountryValues();
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+  renderBanknotes();
+  });
   
 </script>
 </body>
