@@ -1,26 +1,18 @@
 <!DOCTYPE html>
+
 <html lang="hu">
 <head>
-  <meta charset="UTF-8">
-  <title>Tamás Gyűjtemény</title>
-  <style>
+<meta charset="UTF-8">
+<title>Tamás Gyűjtemény</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
 body {
   font-family: Arial;
   background: #111;
   color: white;
   text-align: center;
-}
-
-h1 {
-  margin-top: 30px;
-}
-
-#search {
-  padding: 10px;
-  width: 300px;
-  margin: 20px;
-  border-radius: 5px;
-  border: none;
 }
 
 .container {
@@ -32,8 +24,8 @@ h1 {
 .card {
   background: #222;
   padding: 15px;
-  margin: 15px;
-  width: 250px;
+  margin: 10px;
+  width: 200px;
   border-radius: 10px;
 }
 
@@ -41,422 +33,190 @@ img {
   width: 100%;
   border-radius: 5px;
 }
-#collectionValueBox {
-  background: #222;
-  color: #0f0;
-  padding: 15px;
-  margin: 20px;
-  font-size: 22px;
-  border-radius: 10px;
-} 
-#topNoteBox {
-  background: #333;
-  color: gold;
-  padding: 15px;
-  margin: 20px;
-  font-size: 20px;
-  border-radius: 10px;
-}    
-#countryValueBox {
-  background: #222;
-  padding: 15px;
-  margin: 20px;
-  border-radius: 10px;
-}    
-
- #filters {
-  margin: 20px;
-}
-
-#filters select {
-  padding: 8px;
-  margin: 5px;
-  border-radius: 5px;
-}   
-
-#topListBox {
-  background: #222;
-  padding: 15px;
-  margin: 20px;
-  border-radius: 10px;
-}
-
-#topList .card {
-  display: inline-block;
-  width: 200px;
-}
-
-#addForm {
-  background: #222;
-  padding: 15px;
-  margin: 20px;
-  border-radius: 10px;
-}
 
 #addForm input, #addForm select {
   margin: 5px;
   padding: 8px;
   width: 200px;
 }
-    
+
+#topList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 </style>
+
 </head>
+
 <body>
 
-
 <h1>💰 Tamás Bankjegy Gyűjtemény</h1>
+
 <div id="collectionValueBox">
-  Teljes gyűjtemény értéke: <span id="totalValue">0</span> €
+  Összérték: <span id="totalValue">0</span> €
 </div>
-  
-  <div id="topNoteBox">
-  Legértékesebb bankjegy: <span id="topNote"></span>
-</div>
-  
-<div id="countryValueBox">
-  <h3>Érték ország szerint:</h3>
-  <div id="countryValues"></div>
-</div> 
- 
-<canvas id="valueChart" width="400" height="200"></canvas> 
+
+<input type="text" id="search" placeholder="Keresés">
+
+<input type="text" id="search" placeholder="Keresés">
 
 <div id="addForm">
-  <h3>➕ Új bankjegy hozzáadása</h3>
-
+  <h3>➕ Új bankjegy</h3>
   <input id="nameInput" placeholder="Név"><br>
   <input id="countryInput" placeholder="Ország"><br>
   <input id="yearInput" type="number" placeholder="Év"><br>
-  
+
   <select id="conditionInput">
     <option value="UNC">UNC</option>
-    <option value="AUNC">AUNC</option>
     <option value="XF">XF</option>
     <option value="VF">VF</option>
-    <option value="F">F</option>
-    <option value="VG">VG</option>
-    <option value="G">G</option>
   </select><br>
 
-  <input id="valueInput" type="number" placeholder="Alap érték"><br>
-  <input id="imgInput" type="file" accept="image/*">
+  </div>
 
-  <button onclick="addBanknote()">Hozzáadás</button>
-</div>  
-
-<div id="topListBox">
-  <h2 style="color: gold;">🏆 Top 10 legértékesebb bankjegy</h2>
-  <div id="topList"></div>
-</div>  
-  
-<input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
-
-<button onclick="sortByValue()">Rendezés érték szerint</button>
-<button onclick="sortByYear()">Rendezés év szerint</button> 
-
-<div id="filters">
-
-  <select id="countryFilter">
-    <option value="">Összes ország</option>
-    <option value="Hungary">Hungary</option>
-    <option value="USA">USA</option>
-    <option value="Austria">Austria</option>
-  </select>
-
-  <select id="yearFilter">
-    <option value="">Összes év</option>
-  </select>
-
-  <select id="conditionFilter">
-  <option value="">Minden állapot</option>
-  <option value="UNC">UNC</option>
-  <option value="AUNC">AUNC</option>
-  <option value="XF">XF</option>
-  <option value="VF">VF</option>
-  <option value="F">F</option>
-  <option value="VG">VG</option>
-  <option value="G">G</option>
-</select>
-  
-</div>  
-  
 <div class="container"></div>
-  
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-  
+
+<h2>🏆 Top 10</h2>
+<div id="topList"></div>
+
 <script>
 
- const saved = localStorage.getItem("banknotes");
-
-if (saved) {
-  banknotes.length = 0; //
-  banknotes.push(...JSON.parse(saved));
-}
-const banknotes = [
+// ✅ STABIL BETÖLTÉS
+let banknotes = JSON.parse(localStorage.getItem("banknotes")) || [
   {
     name: "100 Forint",
     country: "Hungary",
     year: 1990,
     condition: "UNC",
     baseValue: 5000,
-    img: "IDE_A_LINKED"
-  },
-  {
-    name: "1 Dollar",
-    country: "USA",
-    year: 2010,
-    condition: "XF",
-    baseValue: 10,
-    img: "https://via.placeholder.com/300x150"
-  },
-  {
-    name: "1 Korona",
-    country: "Austria",
-    year: 1920,
-    condition: "UNC",
-    baseValue: 20,
-    img: "https://pub-a2501e448e5b4181b6769dfb2e007129.r2.dev/bankjegyek/1_Korona_e..jpg"
+    img: "https://via.placeholder.com/150"
   }
 ];
 
-  const saved = localStorage.getItem("banknotes");
-
-if (saved) {
-  const parsed = JSON.parse(saved);
-
-  if (Array.isArray(parsed) && parsed.length > 0) {
-    banknotes.length = 0;
-    banknotes.push(...parsed);
-  }
-}
-
 const container = document.querySelector(".container");
-const searchInput = document.getElementById("search");
 
+// 💰 ÉRTÉK
 function calculateValue(note) {
   let multiplier = 1;
 
-  // állapot
   if (note.condition === "UNC") multiplier = 3;
-  else if (note.condition === "AUNC") multiplier = 2.5;
   else if (note.condition === "XF") multiplier = 2;
   else if (note.condition === "VF") multiplier = 1.5;
-  else if (note.condition === "F") multiplier = 1.2;
-  else if (note.condition === "VG") multiplier = 1;
-  else if (note.condition === "G") multiplier = 0.8;
 
-  let value = note.baseValue * multiplier;
-
-  // 📅 év hatás (régebbi = drágább)
-  if (note.year < 1950) value *= 2;
-  else if (note.year < 1980) value *= 1.5;
-
-  // 🌍 ország ritkaság (példa)
-  if (note.country === "Hungary") value *= 1.2;
-  if (note.country === "Austria") value *= 1.1;
-
-  return Math.round(value);
+  return Math.round(note.baseValue * multiplier);
 }
 
-function renderTopList() {
-  const sorted = [...getFilteredBanknotes()].sort(
-    (a, b) => calculateValue(b) - calculateValue(a)
-  );
-
-  const top10 = sorted.slice(0, 10);
-
-  const container = document.getElementById("topList");
-  container.innerHTML = "";
-
-  top10.forEach(note => {
-    const div = document.createElement("div");
-    div.className = "card";
-
-   div.innerHTML = `
-  <h4>${note.name}</h4>
-  <img src="${note.img || 'https://via.placeholder.com/150'}">
-  <p>💰 ${calculateValue(note)} €</p>
-`;
-
-    container.appendChild(div);
-  });
-}
-  
-function addBanknote() {
-  const file = document.getElementById("imgInput").files[0];
-
-  if (!file) return;
-
-  const img = new Image();
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-    img.src = e.target.result;
-  };
-
-  img.onload = function() {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    const maxWidth = 400;
-    const scale = maxWidth / img.width;
-
-    canvas.width = maxWidth;
-    canvas.height = img.height * scale;
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const compressed = canvas.toDataURL("image/jpeg", 0.7);
-
-    const note = {
-      name: document.getElementById("nameInput").value,
-      country: document.getElementById("countryInput").value,
-      year: parseInt(document.getElementById("yearInput").value),
-      condition: document.getElementById("conditionInput").value,
-      baseValue: parseFloat(document.getElementById("valueInput").value),
-      img: compressed
-    };
-
-    banknotes.push(note);
-    localStorage.setItem("banknotes", JSON.stringify(banknotes));
-
-    renderBanknotes();
-  };
-
-  reader.readAsDataURL(file);
-
-  renderTopList();
-}
-  
-function getFilteredBanknotes() {
-  const country = document.getElementById("countryFilter").value;
-  const condition = document.getElementById("conditionFilter").value;
-
-  return banknotes.filter(note => {
-    if (country && note.country !== country) return false;
-    if (condition && note.condition !== condition) return false;
-    return true;
-  });
-}
-
+// 📊 RENDER
 function renderBanknotes() {
   container.innerHTML = "";
 
-  const filtered = getFilteredBanknotes();
+  banknotes.forEach(note => {
+    const div = document.createElement("div");
+    div.className = "card";
 
-  filtered.forEach(note => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <h2>${note.name}</h2>
-      <img src="${note.img}">
-      <p>Ország: ${note.country}</p>
-      <p>Állapot: ${note.condition}</p>
-      <p>Érték: ${calculateValue(note)} €</p>
-      <p>Év: ${note.year}</p>
+    div.innerHTML = `
+      <h3>${note.name}</h3>
+      <img src="${note.img || 'https://via.placeholder.com/150'}">
+      <p>${calculateValue(note)} €</p>
     `;
 
-    container.appendChild(card);
+    container.appendChild(div);
   });
 
-  updateCollectionValue();
-  findTopNote();
-  calculateCountryValues();
+  updateTotal();
   renderChart();
   renderTopList();
 }
 
-function updateCollectionValue() {
+// ➕ HOZZÁADÁS
+function addBanknote() {
+  const note = {
+    name: document.getElementById("nameInput").value,
+    country: document.getElementById("countryInput").value,
+    year: parseInt(document.getElementById("yearInput").value),
+    condition: document.getElementById("conditionInput").value,
+    baseValue: parseFloat(document.getElementById("valueInput").value),
+    img: document.getElementById("imgInput").value
+  };
+
+  banknotes.push(note);
+
+  localStorage.setItem("banknotes", JSON.stringify(banknotes));
+
+  renderBanknotes();
+}
+
+// 💰 ÖSSZÉRTÉK
+function updateTotal() {
   let total = 0;
-  banknotes.forEach(note => total += calculateValue(note));
+  banknotes.forEach(n => total += calculateValue(n));
   document.getElementById("totalValue").innerText = total;
 }
 
-function findTopNote() {
-  if (banknotes.length === 0) return;
-
-  let top = banknotes[0];
-
-  banknotes.forEach(note => {
-    if (calculateValue(note) > calculateValue(top)) {
-      top = note;
-    }
-  });
-
-  document.getElementById("topNote").innerText =
-    top.name + " (" + calculateValue(top) + " €)";
-}
-
-function calculateCountryValues() {
-  let totals = {};
-
-  banknotes.forEach(note => {
-    const value = calculateValue(note);
-    totals[note.country] = (totals[note.country] || 0) + value;
-  });
-
-  const el = document.getElementById("countryValues");
-  el.innerHTML = "";
-
-  for (let c in totals) {
-    const p = document.createElement("p");
-    p.innerText = c + ": " + totals[c] + " €";
-    el.appendChild(p);
-  }
-}
-
+// 📊 GRAFIKON
 let chart;
-
 function renderChart() {
   const totals = {};
 
-  banknotes.forEach(note => {
-    const value = calculateValue(note);
-    totals[note.country] = (totals[note.country] || 0) + value;
+  banknotes.forEach(n => {
+    totals[n.country] = (totals[n.country] || 0) + calculateValue(n);
   });
 
-  const labels = Object.keys(totals);
-  const data = Object.values(totals);
+  const ctx = document.getElementById("valueChart");
 
-  const ctx = document.getElementById("valueChart").getContext("2d");
-
-  if (chart) {
-    chart.destroy();
-  }
+  if (chart) chart.destroy();
 
   chart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: labels,
+      labels: Object.keys(totals),
       datasets: [{
-        label: "Érték (€)",
-        data: data
+        data: Object.values(totals)
       }]
     }
   });
-}  
-
-function sortByValue() {
-  banknotes.sort((a, b) => calculateValue(b) - calculateValue(a));
-  renderBanknotes();
 }
 
-function sortByYear() {
-  banknotes.sort((a, b) => b.year - a.year);
-  renderBanknotes();
+// 🏆 TOP 10
+function renderTopList() {
+  const top = [...banknotes].sort(
+    (a, b) => calculateValue(b) - calculateValue(a)
+  ).slice(0, 10);
+
+  const container = document.getElementById("topList");
+  container.innerHTML = "";
+
+  top.forEach(note => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h4>${note.name}</h4>
+      <img src="${note.img || 'https://via.placeholder.com/150'}">
+      <p>${calculateValue(note)} €</p>
+    `;
+
+    container.appendChild(div);
+  });
 }
 
-searchInput.addEventListener("keyup", renderBanknotes);
+// 🔍 KERESÉS
+document.getElementById("search").addEventListener("keyup", function() {
+  const value = this.value.toLowerCase();
 
-document.getElementById("countryFilter").addEventListener("change", renderBanknotes);
-document.getElementById("conditionFilter").addEventListener("change", renderBanknotes);
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(value)
+      ? "block"
+      : "none";
+  });
+});
 
-document.addEventListener("DOMContentLoaded", renderBanknotes);
-
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem("banknotes", JSON.stringify(banknotes));
-});  
+// 🚀 INDÍTÁS
+renderBanknotes();
 
 </script>
+
 </body>
 </html>
+:::
