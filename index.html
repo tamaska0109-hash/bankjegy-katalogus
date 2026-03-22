@@ -109,8 +109,6 @@ img {
 
   <select id="yearFilter">
     <option value="">Összes év</option>
-    <option value="1990">1990</option>
-    <option value="2000">2000</option>
   </select>
 
   <select id="conditionFilter">
@@ -201,6 +199,10 @@ function renderBanknotes() {
 
     container.appendChild(card);
   });
+  
+updateCollectionValue();
+findTopNote();
+calculateCountryValues();
 }
 
 searchInput.addEventListener("keyup", function() {
