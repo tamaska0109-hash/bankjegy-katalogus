@@ -186,6 +186,13 @@ h1 {
 
    <script type="module">
 
+     let worldData = null;
+
+async function loadWorldMap() {
+  const res = await fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json");
+  worldData = await res.json();
+}
+
 // 🔥 Firebase import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -319,43 +326,50 @@ function initMap() {
   }).addTo(map);
 }
 
+await loadWorldMap();
 initMap();
 
   function updateMap() {
-  if (!map) return;
+  if (!map || !worldData) return;
 
-  // régi körök törlése
+  // régi rétegek törlése (körök stb.)
   map.eachLayer(layer => {
-    if (layer instanceof L.Circle) {
+    if (layer.options && layer.options.fillColor) {
       map.removeLayer(layer);
     }
   });
 
   const countryCount = {};
 
-  // összesítés
+  // darabszám országonként
   banknotes.forEach(note => {
     if (!note.country) return;
     countryCount[note.country] = (countryCount[note.country] || 0) + 1;
   });
 
-  const coords = {
-    "Magyarország": [47, 19],
-    "Ausztria": [48.2, 16.3],
-    "Németország": [51, 10],
-    "USA": [37, -95]
-  };
+  // országok kirajzolása
+  L.geoJSON(worldData, {
+    style: function(feature) {
+      const name = feature.properties.name;
 
-  Object.keys(countryCount).forEach(country => {
-    if (!coords[country]) return;
+      let count = countryCount[name] || 0;
 
-    L.circle(coords[country], {
-      color: 'gold',
-      radius: 200000 + countryCount[country] * 80000
-    })
-    .addTo(map)
-    .bindPopup(`${country}: ${countryCount[country]} db`);
-  });
+      return {
+        color: "#555",
+        weight: 1,
+        fillColor: count > 0 ? "gold" : "#222",
+        fillOpacity: count > 0 ? 0.7 : 0.2
+      };
+    },
+    onEachFeature: function(feature, layer) {
+      const name = feature.properties.name;
+      const count = countryCount[name] || 0;
+
+      if (count > 0) {
+        layer.bindPopup(`${name}: ${count} db`);
+      }
+    }
+  }).addTo(map);
 }
      
 </script>
