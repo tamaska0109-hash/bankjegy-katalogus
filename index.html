@@ -58,28 +58,38 @@ const banknotes = [
     name: "100 Forint",
     country: "Hungary",
     condition: "UNC",
-    price: 5000,
+    baseValue: 5000,
     img: "IDE_A_LINKED"
   },
   {
     name: "1 Dollar",
     country: "USA",
     condition: "XF",
-    price: 10,
+    baseValue: 10,
     img: "https://via.placeholder.com/300x150"
   },
   {
     name: "1 Korona",
     country: "Austria",
     condition: "UNC",
-    price: 20,
+    baseValue: 20,
     img: "https://pub-a2501e448e5b4181b6769dfb2e007129.r2.dev/bankjegyek/1_Korona_e..jpg"
   }
 ];
 
 const searchInput = document.getElementById("search");
 const container = document.querySelector(".container");
+  
+function calculateValue(note) {
+  let multiplier = 1;
 
+  if (note.condition === "UNC") multiplier = 3;
+  else if (note.condition === "XF") multiplier = 2;
+  else if (note.condition === "VF") multiplier = 1.5;
+
+  return note.baseValue * multiplier;
+}
+  
 function renderBanknotes() {
   container.innerHTML = "";
 
@@ -92,7 +102,7 @@ function renderBanknotes() {
       <img src="${note.img}">
       <p>Ország: ${note.country}</p>
       <p>Állapot: ${note.condition}</p>
-      <p>Ár: ${note.price}</p>
+      <p>Érték: ${calculateValue(note)} €</p>
     `;
 
     container.appendChild(card);
