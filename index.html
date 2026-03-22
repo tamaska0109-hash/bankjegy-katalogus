@@ -45,15 +45,15 @@ img {
 </head>
 <body>
 
-<body>
 
 <h1>💰 Tamás Bankjegy Gyűjtemény</h1>
 
 <input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
 
-<div class="container">
+<div class="container"></div>
+<script>
 
- const banknotes = [
+const banknotes = [
   {
     name: "100 Forint",
     country: "Hungary",
@@ -77,22 +77,8 @@ img {
   }
 ];
 
-</div>
-<script>
 const searchInput = document.getElementById("search");
-
-searchInput.addEventListener("keyup", function() {
-  const value = this.value.toLowerCase();
-
-  const cards = document.querySelectorAll(".card");
-
-  cards.forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(value)
-      ? "block"
-      : "none";
-  });
-});
- const container = document.querySelector(".container");
+const container = document.querySelector(".container");
 
 function renderBanknotes() {
   container.innerHTML = "";
@@ -112,9 +98,22 @@ function renderBanknotes() {
     container.appendChild(card);
   });
 }
+
+searchInput.addEventListener("keyup", function() {
+  const value = this.value.toLowerCase();
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(value)
+      ? "block"
+      : "none";
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function() {
   renderBanknotes();
-}); 
+});
+
 </script>
 </body>
 </html>
