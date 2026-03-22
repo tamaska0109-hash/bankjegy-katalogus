@@ -273,13 +273,14 @@ function sortByYear() {
   renderBanknotes();
 } 
 
-  function getFilteredBanknotes() {
+function getFilteredBanknotes() {
   const country = document.getElementById("countryFilter").value;
   const condition = document.getElementById("conditionFilter").value;
 
   return banknotes.filter(note => {
-    return (!country || note.country === country) &&
-           (!condition || note.condition === condition);
+    if (country && note.country !== country) return false;
+    if (condition && note.condition !== condition) return false;
+    return true;
   });
 }
 
