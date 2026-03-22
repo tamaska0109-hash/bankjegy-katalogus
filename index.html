@@ -53,12 +53,10 @@ img {
 
    <script>
 
-     let banknotes = [
+     let banknotes = JSON.parse(localStorage.getItem("banknotes")) || [
   {
-    name: "100 Forint",
-    country: "Hungary",
-    year: 1990,
-    value: 15000,
+    name: "Teszt bankjegy",
+    value: 100,
     img: "https://via.placeholder.com/150"
   }
 ];
@@ -92,6 +90,8 @@ function addBanknote() {
   };
 
   banknotes.push(note);
+
+  localStorage.setItem("banknotes", JSON.stringify(banknotes));
 
   renderBanknotes();
 }
