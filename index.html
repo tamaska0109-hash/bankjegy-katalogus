@@ -38,7 +38,7 @@ img {
 
   <body>
 
-   <h1>💰 Tamás Bankjegy Gyűjtemény</h1>
+   <h1>💰 Tamás Bankjegy Gyűjteménye</h1>
 
     <div id="totalValue"></div>
 
@@ -53,6 +53,17 @@ img {
   <input id="nameInput" placeholder="Név"><br>
   <input id="countryInput" placeholder="Ország"><br>
   <input id="yearInput" placeholder="Év"><br>
+
+<select id="conditionInput">
+  <option value="UNC">UNC (Uncirculated)</option>
+  <option value="AU">AU (About Uncirculated)</option>
+  <option value="XF">XF (Extremely Fine)</option>
+  <option value="VF">VF (Very Fine)</option>
+  <option value="F">Fine</option>
+  <option value="VG">Very Good</option>
+  <option value="G">Good</option>
+</select><br>
+     
   <input id="valueInput" placeholder="Érték"><br>
   <input id="imgInput" placeholder="Kép link"><br>
   <button onclick="addBanknote()">Hozzáadás</button>
@@ -95,6 +106,7 @@ function renderBanknotes() {
       <h3>${note.name}</h3>
       <img src="${note.img || 'https://via.placeholder.com/150'}">
       <p>${note.value} €</p>
+      <p>Állapot: ${note.condition}</p>
       <button onclick="deleteNote('${note.id}')">❌</button>
     `;
 
@@ -108,7 +120,7 @@ window.addBanknote = async function () {
     name: document.getElementById("nameInput").value,
     country: document.getElementById("countryInput").value,
     year: parseInt(document.getElementById("yearInput").value),
-    condition: "UNC",
+   condition: document.getElementById("conditionInput").value,
     value: parseFloat(document.getElementById("valueInput").value),
     img: document.getElementById("imgInput").value
   };
