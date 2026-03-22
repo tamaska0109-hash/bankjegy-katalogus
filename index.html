@@ -55,10 +55,14 @@ img {
 
    <script>
 
-const supabase = window.supabase.createClient(
-  "https://fqhhzagiwdvbclcuhztmb.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaGh6YWdpd2R2YmxjdWh6dG1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDMwMjUsImV4cCI6MjA4OTY3OTAyNX0.w1MRyD-YRalYYu_PpPfSRvC0BbmhWkoYCgUBOvzsHOQ"
-);
+     if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(
+    "https://fqhhzagiwdvbclcuhztmb.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaGh6YWdpd2R2YmxjdWh6dG1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDMwMjUsImV4cCI6MjA4OTY3OTAyNX0.w1MRyD-YRalYYu_PpPfSRvC0BbmhWkoYCgUBOvzsHOQ"
+  );
+}
+
+const supabase = window.supabaseClient;
 
 let banknotes = [];
 
