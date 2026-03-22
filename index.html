@@ -43,6 +43,13 @@ img {
     <div id="totalValue"></div>
 
    <div id="addForm">
+     <hr>
+
+<input id="filterCountry" placeholder="Szűrés országra">
+<input id="filterYear" placeholder="Szűrés évre">
+<button onclick="applyFilter()">Szűrés</button>
+<button onclick="resetFilter()">Reset</button>
+     
   <input id="nameInput" placeholder="Név"><br>
   <input id="countryInput" placeholder="Ország"><br>
   <input id="yearInput" placeholder="Év"><br>
@@ -134,7 +141,48 @@ window.deleteNote = async function (id) {
 };
 
 // 🚀 Indítás
-loadBanknotes();
+let allBanknotes = [];
+
+// 🔄 módosítjuk a loadBanknotes-t
+async function loadBanknotes() {
+  const querySnapshot = await getDocs(collection(db, "banknotes"));
+
+  banknotes = [];
+  allBanknotes = [];
+
+  querySnapshot.forEach((docu) => {
+    const data = {
+      id: docu.id,
+      ...docu.data()
+    };
+
+    banknotes.push(data);
+    allBanknotes.push(data);
+  });
+
+  renderBanknotes();
+}
+
+// 🔍 Szűrés
+window.applyFilter = function () {
+  const country = document.getElementById("filterCountry").value.toLowerCase();
+  const year = document.getElementById("filterYear").value;
+
+  banknotes = allBanknotes.filter(note => {
+    return (
+      (!country || note.country.toLowerCase().includes(country)) &&
+      (!year || note.year == year)
+    );
+  });
+
+  renderBanknotes();
+};
+
+// 🔄 Reset
+window.resetFilter = function () {
+  banknotes = [...allBanknotes];
+  renderBanknotes();
+};
 
 </script>
 
