@@ -3,7 +3,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Tamás Gyűjtemény</title>
+<title>Tamás Gyűjteménye</title>
 
   <style>
 
@@ -144,7 +144,7 @@ h1 {
 
    <h1>💰 Tamás Bankjegy Gyűjteménye</h1>
 
-    <div id="totalValue"></div>
+    <h2 id="totalValue">Összérték: 0 €</h2>
 
    <div class="top-bar">
   <input id="filterCountry" placeholder="Ország">
@@ -215,6 +215,7 @@ function renderBanknotes() {
 
     container.appendChild(div);
   });
+  updateTotal();
 }
 
 // ➕ Hozzáadás
@@ -284,6 +285,17 @@ window.resetFilter = function () {
 };
 
 loadBanknotes();
+
+  function updateTotal() {
+  let total = 0;
+
+  banknotes.forEach(note => {
+    total += Number(note.value) || 0;
+  });
+
+  document.getElementById("totalValue").innerText =
+    "Összérték: " + total + " €";
+}   
      
 </script>
 
