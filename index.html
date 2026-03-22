@@ -62,7 +62,9 @@ img {
   padding: 15px;
   margin: 20px;
   border-radius: 10px;
-}    
+}  
+    
+<canvas id="valueChart" width="400" height="200"></canvas>   
 
  #filters {
   margin: 20px;
@@ -125,6 +127,7 @@ img {
 </div>  
   
 <div class="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 <script>
 
 const banknotes = [
@@ -206,6 +209,7 @@ function renderBanknotes() {
   updateCollectionValue();
   findTopNote();
   calculateCountryValues();
+  renderChart();
 }
 
 function updateCollectionValue() {
@@ -246,6 +250,37 @@ function calculateCountryValues() {
     el.appendChild(p);
   }
 }
+
+let chart;
+
+function renderChart() {
+  const totals = {};
+
+  banknotes.forEach(note => {
+    const value = calculateValue(note);
+    totals[note.country] = (totals[note.country] || 0) + value;
+  });
+
+  const labels = Object.keys(totals);
+  const data = Object.values(totals);
+
+  const ctx = document.getElementById("valueChart").getContext("2d");
+
+  if (chart) {
+    chart.destroy();
+  }
+
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Érték (€)",
+        data: data
+      }]
+    }
+  });
+}  
 
 function sortByValue() {
   banknotes.sort((a, b) => calculateValue(b) - calculateValue(a));
