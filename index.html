@@ -218,6 +218,17 @@ const banknotes = [
   }
 ];
 
+  const saved = localStorage.getItem("banknotes");
+
+if (saved) {
+  const parsed = JSON.parse(saved);
+
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    banknotes.length = 0;
+    banknotes.push(...parsed);
+  }
+}
+
 const container = document.querySelector(".container");
 const searchInput = document.getElementById("search");
 
@@ -312,6 +323,8 @@ function addBanknote() {
   };
 
   reader.readAsDataURL(file);
+
+  renderTopList();
 }
   
 function getFilteredBanknotes() {
