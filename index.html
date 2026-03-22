@@ -453,6 +453,10 @@ document.getElementById("conditionFilter").addEventListener("change", renderBank
 
 document.addEventListener("DOMContentLoaded", renderBanknotes);
 
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("banknotes", JSON.stringify(banknotes));
+});  
+
 </script>
 </body>
 </html>
