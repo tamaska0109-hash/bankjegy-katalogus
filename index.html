@@ -55,16 +55,16 @@ img {
 
    <script>
 
-
 const supabase = window.supabase.createClient(
   "https://fqhhzagiwdvbclcuhztmb.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaGh6YWdpd2R2YmxjdWh6dG1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDMwMjUsImV4cCI6MjA4OTY3OTAyNX0.w1MRyD-YRalYYu_PpPfSRvC0BbmhWkoYCgUBOvzsHOQ"
+  "IDE_A_SAJÁT_PUBLIC_KEY"
 );
 
 let banknotes = [];
 
 const container = document.querySelector(".container");
 
+// 🔄 Megjelenítés
 function renderBanknotes() {
   container.innerHTML = "";
 
@@ -76,20 +76,21 @@ function renderBanknotes() {
       <h3>${note.name}</h3>
       <img src="${note.img || 'https://via.placeholder.com/150'}">
       <p>${note.value} €</p>
+      <button onclick="deleteNote('${note.id}')">❌</button>
     `;
 
     container.appendChild(div);
   });
 }
 
+// ☁️ Betöltés Supabase-ből
 async function loadBanknotes() {
   const { data, error } = await supabase
     .from("banknotes")
     .select("*");
 
   if (error) {
-    console.error(error);
-    alert("Betöltési hiba!");
+    console.error("Betöltési hiba:", error);
     return;
   }
 
@@ -97,6 +98,7 @@ async function loadBanknotes() {
   renderBanknotes();
 }
 
+// ➕ Hozzáadás
 async function addBanknote() {
   const note = {
     name: document.getElementById("nameInput").value,
@@ -112,17 +114,34 @@ async function addBanknote() {
     .insert([note]);
 
   if (error) {
-    console.error(error);
-    alert("Hiba történt mentéskor!");
+    console.error("Mentési hiba:", error);
+    alert("Hiba mentéskor!");
     return;
   }
 
   loadBanknotes();
 }
 
+// 🗑️ Törlés
+async function deleteNote(id) {
+  const { error } = await supabase
+    .from("banknotes")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Törlési hiba:", error);
+    return;
+  }
+
+  loadBanknotes();
+}
+
+// 🚀 Indítás
 loadBanknotes();
 
 </script>
+
  async function loadBanknotes() {
   const { data, error } = await supabase
     .from("banknotes")
