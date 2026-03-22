@@ -53,8 +53,16 @@ img {
 
    <script>
 
-let banknotes = [];
-
+     let banknotes = [
+  {
+    name: "100 Forint",
+    country: "Hungary",
+    year: 1990,
+    value: 15000,
+    img: "https://via.placeholder.com/150"
+  }
+];
+     
 const container = document.querySelector(".container");
 
 function renderBanknotes() {
