@@ -73,6 +73,18 @@ img {
   margin: 5px;
   border-radius: 5px;
 }   
+
+#topListBox {
+  background: #222;
+  padding: 15px;
+  margin: 20px;
+  border-radius: 10px;
+}
+
+#topList .card {
+  display: inline-block;
+  width: 200px;
+}
     
 </style>
 </head>
@@ -94,6 +106,11 @@ img {
 </div> 
  
 <canvas id="valueChart" width="400" height="200"></canvas> 
+
+<div id="topListBox">
+  <h3>Top 10 legértékesebb bankjegy</h3>
+  <div id="topList"></div>
+</div>  
   
 <input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
 
@@ -186,6 +203,32 @@ function calculateValue(note) {
 
   return Math.round(value);
 }
+
+function renderTopList() {
+  const sorted = [...banknotes].sort(
+    (a, b) => calculateValue(b) - calculateValue(a)
+  );
+
+  const top10 = sorted.slice(0, 10);
+
+  const container = document.getElementById("topList");
+  container.innerHTML = "";
+
+  top10.forEach(note => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h4>${note.name}</h4>
+      <img src="${note.img}">
+      <p>${calculateValue(note)} €</p>
+    `;
+
+    container.appendChild(div);
+  });
+}
+  
+  
 function getFilteredBanknotes() {
   const country = document.getElementById("countryFilter").value;
   const condition = document.getElementById("conditionFilter").value;
@@ -222,6 +265,7 @@ function renderBanknotes() {
   findTopNote();
   calculateCountryValues();
   renderChart();
+  renderToplist();
 }
 
 function updateCollectionValue() {
