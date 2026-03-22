@@ -57,6 +57,12 @@ img {
   font-size: 20px;
   border-radius: 10px;
 }    
+#countryValueBox {
+  background: #222;
+  padding: 15px;
+  margin: 20px;
+  border-radius: 10px;
+}    
 </style>
 </head>
 <body>
@@ -66,9 +72,16 @@ img {
 <div id="collectionValueBox">
   Teljes gyűjtemény értéke: <span id="totalValue">0</span> €
 </div>
+  
   <div id="topNoteBox">
   Legértékesebb bankjegy: <span id="topNote"></span>
 </div>
+  
+<div id="countryValueBox">
+  <h3>Érték ország szerint:</h3>
+  <div id="countryValues"></div>
+</div> 
+  
 <input type="text" id="search" placeholder="Keresés (pl. Forint, Dollar...)">
 
 <div class="container"></div>
@@ -155,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
   renderBanknotes();
   updateCollectionValue();
   findTopNote();
+  calculateCountryValues();
   function findTopNote() {
   let top = null;
 
@@ -168,6 +182,29 @@ document.addEventListener("DOMContentLoaded", function() {
     top.name + " (" + calculateValue(top) + " €)";
 }
 });
+  
+  function calculateCountryValues() {
+  let countryTotals = {};
+
+  banknotes.forEach(note => {
+    const value = calculateValue(note);
+
+    if (!countryTotals[note.country]) {
+      countryTotals[note.country] = 0;
+    }
+
+    countryTotals[note.country] += value;
+  });
+
+  const container = document.getElementById("countryValues");
+  container.innerHTML = "";
+
+  for (let country in countryTotals) {
+    const p = document.createElement("p");
+    p.innerText = country + ": " + countryTotals[country] + " €";
+    container.appendChild(p);
+  }
+}
 </script>
 </body>
 </html>
