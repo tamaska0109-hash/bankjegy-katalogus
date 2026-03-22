@@ -205,12 +205,13 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-      <h3>${note.name || "Nincs név"}</h3>
-      <img src="${note.img || 'https://via.placeholder.com/150'}">
-      <p>${note.value} €</p>
-      <p>Állapot: ${note.condition}</p>
-      <button onclick="deleteNote('${note.id}')">❌</button>
-    `;
+  <img src="${note.img || 'https://via.placeholder.com/150'}">
+  <h3>${note.name || "Nincs név"}</h3>
+  <p>${note.country || "Ismeretlen ország"} • ${note.year || "-"}</p>
+  <p>💰 ${note.value || 0} €</p>
+  <p>Állapot: ${note.condition || "-"}</p>
+  <button onclick="deleteNote('${note.id}')">Törlés</button>
+`;
 
     container.appendChild(div);
   });
