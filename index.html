@@ -53,32 +53,29 @@ img {
 
 <div class="container">
 
-  <div class="card">
-    <h2>100 Forint</h2>
-    <img src="IDE_A_LINKED">
-    <p>Állapot: UNC</p>
-    <p>Katalógus szám: HU-001</p>
-    <p>Ár: 5000 Ft</p>
-    <p>Beszerzés: 2024, Budapest</p>
-    <p>Megjegyzés: Szép állapot</p>
-  </div>
-
-  <div class="card">
-    <h2>1 Dollar</h2>
-    <img src="https://via.placeholder.com/300x150">
-    <p>Állapot: XF</p>
-    <p>Katalógus szám: US-001</p>
-    <p>Ár: 10 USD</p>
-    <p>Beszerzés: 2023, USA</p>
-    <p>Megjegyzés: Régi darab</p>
-  </div>
-
-  <div class="card">
-    <h2>1 Korona</h2>
-    <img src="https://pub-a2501e448e5b4181b6769dfb2e007129.r2.dev/bankjegyek/1_Korona_e..jpg">
-    <p>Állapot: UNC</p>
-    <p>Megjegyzés: Szép darab</p>
-  </div>
+ const banknotes = [
+  {
+    name: "100 Forint",
+    country: "Hungary",
+    condition: "UNC",
+    price: 5000,
+    img: "IDE_A_LINKED"
+  },
+  {
+    name: "1 Dollar",
+    country: "USA",
+    condition: "XF",
+    price: 10,
+    img: "https://via.placeholder.com/300x150"
+  },
+  {
+    name: "1 Korona",
+    country: "Austria",
+    condition: "UNC",
+    price: 20,
+    img: "https://pub-a2501e448e5b4181b6769dfb2e007129.r2.dev/bankjegyek/1_Korona_e..jpg"
+  }
+];
 
 </div>
 <script>
@@ -86,6 +83,7 @@ const searchInput = document.getElementById("search");
 
 searchInput.addEventListener("keyup", function() {
   const value = this.value.toLowerCase();
+
   const cards = document.querySelectorAll(".card");
 
   cards.forEach(card => {
@@ -94,6 +92,28 @@ searchInput.addEventListener("keyup", function() {
       : "none";
   });
 });
+ const container = document.querySelector(".container");
+
+function renderBanknotes() {
+  container.innerHTML = "";
+
+  banknotes.forEach(note => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h2>${note.name}</h2>
+      <img src="${note.img}">
+      <p>Ország: ${note.country}</p>
+      <p>Állapot: ${note.condition}</p>
+      <p>Ár: ${note.price}</p>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+renderBanknotes(); 
 </script>
 </body>
 </html>
