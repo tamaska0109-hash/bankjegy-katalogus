@@ -437,11 +437,44 @@ function updateMap() {
       });
 
       layer.on('click', function() {
-        banknotes = allBanknotes.filter(note =>
-          normalizeCountry(note.country) === name
-        );
-        renderBanknotes();
-      });
+
+  const mapName = normalizeCountry(feature.properties.name);
+
+  const countryMap = {
+    "magyarorszag": "hungary",
+    "nemetorszag": "germany",
+    "ausztria": "austria",
+    "olaszorszag": "italy",
+    "spanyolorszag": "spain",
+    "franciaorszag": "france",
+    "hollandia": "netherlands",
+    "lengyelorszag": "poland",
+    "csehorszag": "czechia",
+    "szlovakia": "slovakia",
+    "romania": "romania",
+    "horvatorszag": "croatia",
+    "szerbia": "serbia",
+    "kina": "china",
+    "japan": "japan",
+    "usa": "united states of america",
+    "egyesult allamok": "united states of america",
+    "egyiptom": "egypt",
+    "torokorszag": "turkey",
+    "gorogorszag": "greece"
+  };
+
+  banknotes = allBanknotes.filter(note => {
+    if (!note.country) return false;
+
+    let noteCountry = normalizeCountry(note.country);
+
+    noteCountry = countryMap[noteCountry] || noteCountry;
+
+    return noteCountry === mapName;
+  });
+
+  renderBanknotes();
+});
     }
   }).addTo(map);
 }
