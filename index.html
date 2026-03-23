@@ -573,21 +573,9 @@ window.estimateValue = function() {
 let base = 5;
 
 // régiók
-if (["united states of america", "canada"].includes(c)) base = 10;
-
-else if (["germany", "france", "united kingdom", "netherlands", "switzerland", "austria", "italy", "spain", "belgium"].includes(c)) base = 8;
-
-else if (["hungary", "poland", "czech republic", "slovakia", "romania", "bulgaria", "serbia", "croatia"].includes(c)) base = 6;
-
-else if (["japan", "china", "south korea", "singapore"].includes(c)) base = 9;
-
-else if (["india", "indonesia", "philippines", "vietnam"].includes(c)) base = 5;
-
-else if (["egypt", "south africa", "morocco", "tunisia"].includes(c)) base = 6;
-
-else if (["brazil", "argentina", "mexico", "chile"].includes(c)) base = 7;
-
-if (!base) base = 5;  
+if (country === "USA") base = 10;
+if (country === "Hungary") base = 6;
+if (country === "Germany") base = 8;
 
   // év (régebbi = drágább)
   let ageFactor = 1;
