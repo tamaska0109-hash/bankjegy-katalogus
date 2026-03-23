@@ -573,7 +573,7 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   .replace(/[\u0300-\u036f]/g, "");
   let count = countryCount[name] || 0;
 
-  let fillColor = "#222"; // alap
+  let fillColor = "#transparent"; // alap
 
   if (count > 0 && count <= 5) {
     fillColor = "#a8e6cf";
@@ -587,7 +587,7 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
     color: "#555",
     weight: 1,
     fillColor: fillColor,
-    fillOpacity: count > 0 ? 0.7 : 0.2
+    fillOpacity: count > 0 ? 0.7 : 0
   };
 },
     
