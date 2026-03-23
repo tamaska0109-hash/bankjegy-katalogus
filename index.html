@@ -266,16 +266,18 @@ h1 {
 
    <script type="module">
 
-  if (localStorage.getItem("isAdmin") === "true") {
-  isAdmin = true;
-} 
-
 let isAdmin = false;
 let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
 
+// ADMIN STATE
+if (localStorage.getItem("isAdmin") === "true") {
+  isAdmin = true;
+}
+
+// NORMALIZE
 function normalizeCountry(name) {
   if (!name) return "";
   return name.toLowerCase().trim()
@@ -283,14 +285,14 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-// Firebase
+// FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIza...",
+  apiKey: "AIzaSyDupwhLiT13blp-UtOCy4A57337sQQuHLw",
   authDomain: "bankjegy-2c60b.firebaseapp.com",
-  projectId: "bankjegy-2c60b",
+  projectId: "bankjegy-2c60b"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -298,13 +300,13 @@ const db = getFirestore(app);
 
 const container = document.querySelector(".container");
 
-// LOAD MAP
+// MAP LOAD
 async function loadWorldMap() {
   const res = await fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json");
   worldData = await res.json();
 }
 
-// INIT MAP
+// MAP INIT
 function initMap() {
   map = L.map('map').setView([20, 0], 2);
 
@@ -312,24 +314,7 @@ function initMap() {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 }
-// UPDATE
-function updateTotal() {
 
-  if (!isAdmin) {
-    document.getElementById("totalValue").innerText = "Összérték: 🔒";
-    return;
-  }
-
-  let total = 0;
-
-  banknotes.forEach(note => {
-    total += Number(note.value) || 0;
-  });
-
-  document.getElementById("totalValue").innerText =
-    "Összérték: " + total + " €";
-}
-     
 // RENDER
 function renderBanknotes() {
   container.innerHTML = "";
@@ -339,27 +324,27 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-  <img src="${note.img || 'https://via.placeholder.com/150'}">
-  <h3>${note.name || ""}</h3>
-  <p>${note.country || ""} • ${note.year || ""}</p>
-  <p>Katalógus: ${note.catalog || "-"}</p>
+      <img src="${note.img || 'https://via.placeholder.com/150'}">
+      <h3>${note.name || ""}</h3>
+      <p>${note.country || ""} • ${note.year || ""}</p>
+      <p>Katalógus: ${note.catalog || "-"}</p>
 
-  ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
-  ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
+      ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
+      ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
 
-  <p>Állapot: ${note.condition || "-"}</p>
+      <p>Állapot: ${note.condition || "-"}</p>
 
-  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
-`;
+      ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+    `;
+
     container.appendChild(div);
   });
+
+  document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
 
   updateMap();
   updateStats();
   updateTotal();
-
-document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
-  
 }
 
 // ADD
@@ -370,10 +355,8 @@ window.addBanknote = async function () {
     year: parseInt(yearInput.value),
     catalog: catalogInput.value,
     condition: conditionInput.value,
-
-    purchase: parseFloat(document.getElementById("purchaseInput").value),
-    value: parseFloat(document.getElementById("valueInput").value), 
-
+    value: parseFloat(valueInput.value),
+    purchase: parseFloat(purchaseInput.value),
     img: imgInput.value
   };
 
@@ -495,6 +478,36 @@ function updateStats() {
       statsDiv.appendChild(div);
     });
 }
+
+// TOTAL
+function updateTotal() {
+  if (!isAdmin) {
+    document.getElementById("totalValue").innerText = "Összérték: 🔒";
+    return;
+  }
+
+  let total = 0;
+  banknotes.forEach(n => total += Number(n.value) || 0);
+
+  document.getElementById("totalValue").innerText = "Összérték: " + total + " €";
+}
+
+// ADMIN
+window.adminLogin = function() {
+  const password = prompt("Jelszó:");
+
+  if (password === "1234") {
+    isAdmin = true;
+    localStorage.setItem("isAdmin", "true");
+    renderBanknotes();
+  }
+};
+
+window.logout = function() {
+  isAdmin = false;
+  localStorage.removeItem("isAdmin");
+  renderBanknotes();
+};
 
 // INIT
 await loadWorldMap();
