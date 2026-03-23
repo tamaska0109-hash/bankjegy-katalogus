@@ -266,6 +266,10 @@ h1 {
 
    <script type="module">
 
+  if (localStorage.getItem("isAdmin") === "true") {
+  isAdmin = true;
+} 
+
 let isAdmin = false;
 let worldData = null;
 let map;
@@ -308,7 +312,24 @@ function initMap() {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 }
+// UPDATE
+function updateTotal() {
 
+  if (!isAdmin) {
+    document.getElementById("totalValue").innerText = "Összérték: 🔒";
+    return;
+  }
+
+  let total = 0;
+
+  banknotes.forEach(note => {
+    total += Number(note.value) || 0;
+  });
+
+  document.getElementById("totalValue").innerText =
+    "Összérték: " + total + " €";
+}
+     
 // RENDER
 function renderBanknotes() {
   container.innerHTML = "";
@@ -318,19 +339,27 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-      <img src="${note.img || 'https://via.placeholder.com/150'}">
-      <h3>${note.name || ""}</h3>
-      <p>${note.country || ""} • ${note.year || ""}</p>
-      <p>Katalógus: ${note.catalog || "-"}</p>
-      <p>Állapot: ${note.condition || "-"}</p>
-      ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
-    `;
+  <img src="${note.img || 'https://via.placeholder.com/150'}">
+  <h3>${note.name || ""}</h3>
+  <p>${note.country || ""} • ${note.year || ""}</p>
+  <p>Katalógus: ${note.catalog || "-"}</p>
 
+  ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
+  ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
+
+  <p>Állapot: ${note.condition || "-"}</p>
+
+  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+`;
     container.appendChild(div);
   });
 
   updateMap();
   updateStats();
+  updateTotal();
+
+document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
+  
 }
 
 // ADD
@@ -341,6 +370,10 @@ window.addBanknote = async function () {
     year: parseInt(yearInput.value),
     catalog: catalogInput.value,
     condition: conditionInput.value,
+
+    purchase: parseFloat(document.getElementById("purchaseInput").value),
+    value: parseFloat(document.getElementById("valueInput").value), 
+
     img: imgInput.value
   };
 
