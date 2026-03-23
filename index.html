@@ -269,7 +269,7 @@ function renderBanknotes() {
   <h3>${note.name || "Nincs név"}</h3>
   <p>${note.country || "Ismeretlen ország"} • ${note.year || "-"}</p>
   <p>Katalógus: ${note.catalog || "-"}</p>
-  <p>💰 ${note.value || 0} €</p>
+  ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
   ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
   <p>Állapot: ${note.condition || "-"}</p>
   ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
