@@ -1029,7 +1029,8 @@ window.resetFilter = function () {
   });
 
   // 🔥 kijelölés (FONTOS!)
-  event.currentTarget.classList.add("active-legend"); 
+  const el = document.querySelector(`[onclick="filterByRange('${range}')"]`);
+  if (el) el.classList.add("active-legend");
 
   const countryCount = {};
 
