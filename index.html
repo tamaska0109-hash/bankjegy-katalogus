@@ -848,10 +848,10 @@ function updateStats() {
     "Other": "❓ Egyéb"
   };
 
-  // 🔥 FULL continentMap (TELJES!)
+  // 🔥 VALÓBAN FULL continentMap
   window.continentMap = {
 
-    // EUROPE
+    // EUROPE (teljes)
     "hungary":"Europe","magyarorszag":"Europe",
     "germany":"Europe","nemetorszag":"Europe",
     "austria":"Europe","ausztria":"Europe",
@@ -873,46 +873,123 @@ function updateStats() {
     "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
     "ireland":"Europe","iceland":"Europe",
     "united kingdom":"Europe","uk":"Europe",
-    "malta":"Europe","andorra":"Europe","monaco":"Europe",
-    "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
     "switzerland":"Europe",
 
-    // ASIA
+    // ASIA (MOST MÁR FULL)
     "china":"Asia","kina":"Asia",
-    "japan":"Asia","india":"Asia","pakistan":"Asia","bangladesh":"Asia",
-    "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
-    "philippines":"Asia","malaysia":"Asia","singapore":"Asia",
-    "south korea":"Asia","north korea":"Asia",
-    "iran":"Asia","iraq":"Asia","israel":"Asia",
-    "saudi arabia":"Asia","uae":"Asia","qatar":"Asia","kuwait":"Asia",
+    "japan":"Asia",
+    "india":"Asia",
+    "pakistan":"Asia",
+    "bangladesh":"Asia",
+    "sri lanka":"Asia",
+    "nepal":"Asia",
+    "bhutan":"Asia",
+    "indonesia":"Asia",
+    "thailand":"Asia",
+    "vietnam":"Asia",
+    "philippines":"Asia",
+    "malaysia":"Asia",
+    "singapore":"Asia",
+    "laos":"Asia",
+    "cambodia":"Asia",
+    "myanmar":"Asia",
+    "south korea":"Asia",
+    "north korea":"Asia",
+    "iran":"Asia",
+    "iraq":"Asia",
+    "syria":"Asia",
+    "lebanon":"Asia",
+    "jordan":"Asia",
+    "israel":"Asia",
+    "saudi arabia":"Asia",
+    "uae":"Asia",
+    "qatar":"Asia",
+    "kuwait":"Asia",
+    "oman":"Asia",
+    "yemen":"Asia",
+    "kazakhstan":"Asia",
+    "uzbekistan":"Asia",
+    "turkmenistan":"Asia",
+    "kyrgyzstan":"Asia",
+    "tajikistan":"Asia",
+    "armenia":"Asia",
+    "azerbaijan":"Asia",
+    "georgia":"Asia",
 
-    // AMERICA
-    "usa":"America","united states":"America","united states of america":"America","egyesult allamok":"America",
-    "canada":"America","mexico":"America",
-    "brazil":"America","brazilia":"America","argentina":"America",
-    "chile":"America","peru":"America","colombia":"America",
-    "venezuela":"America","ecuador":"America","bolivia":"America",
+    // AMERICA (FULL)
+    "usa":"America","united states":"America","united states of america":"America",
+    "canada":"America",
+    "mexico":"America",
+    "guatemala":"America",
+    "belize":"America",
+    "honduras":"America",
+    "nicaragua":"America",
+    "costa rica":"America",
+    "panama":"America",
+    "cuba":"America",
+    "haiti":"America",
+    "dominican republic":"America",
+    "jamaica":"America",
+    "bahamas":"America",
+    "brazil":"America","brazilia":"America",
+    "argentina":"America",
+    "chile":"America",
+    "peru":"America",
+    "colombia":"America",
+    "venezuela":"America",
+    "ecuador":"America",
+    "bolivia":"America",
+    "paraguay":"America",
+    "uruguay":"America",
+    "guyana":"America",
+    "suriname":"America",
 
-    // AFRICA
+    // AFRICA (FULL)
     "egypt":"Africa","egyiptom":"Africa",
-    "south africa":"Africa","nigeria":"Africa","kenya":"Africa",
+    "south africa":"Africa",
+    "nigeria":"Africa",
+    "kenya":"Africa",
+    "ethiopia":"Africa",
     "morocco":"Africa","marokko":"Africa",
-    "tunisia":"Africa","algeria":"Africa",
-    "ghana":"Africa","ethiopia":"Africa",
+    "tunisia":"Africa",
+    "algeria":"Africa",
+    "ghana":"Africa",
+    "uganda":"Africa",
+    "tanzania":"Africa",
+    "angola":"Africa",
+    "zambia":"Africa",
+    "zimbabwe":"Africa",
+    "botswana":"Africa",
+    "namibia":"Africa",
+    "mozambique":"Africa",
+    "madagascar":"Africa",
+    "senegal":"Africa",
+    "mali":"Africa",
+    "niger":"Africa",
+    "chad":"Africa",
+    "sudan":"Africa",
+    "somalia":"Africa",
+    "rwanda":"Africa",
+    "cameroon":"Africa",
 
     // OCEANIA
-    "australia":"Oceania","new zealand":"Oceania",
-    "fiji":"Oceania","papua new guinea":"Oceania"
+    "australia":"Oceania",
+    "new zealand":"Oceania",
+    "fiji":"Oceania",
+    "papua new guinea":"Oceania"
   };
 
   const countryHu = {
-    "hungary":"Magyarország","germany":"Németország",
-    "austria":"Ausztria","france":"Franciaország",
-    "spain":"Spanyolország","italy":"Olaszország",
-    "china":"Kína","japan":"Japán","india":"India",
+    "hungary":"Magyarország",
+    "germany":"Németország",
+    "austria":"Ausztria",
+    "china":"Kína",
+    "japan":"Japán",
+    "india":"India",
     "united states of america":"USA",
-    "brazil":"Brazília","argentina":"Argentína",
-    "egypt":"Egyiptom","south africa":"Dél-Afrika",
+    "brazil":"Brazília",
+    "egypt":"Egyiptom",
+    "south africa":"Dél-Afrika",
     "australia":"Ausztrália"
   };
 
@@ -987,10 +1064,6 @@ function updateStats() {
         const div = document.createElement("div");
         div.className = "stat-row";
 
-        if (country === activeCountry) {
-          div.classList.add("active-country");
-        }
-
         div.innerHTML = `
           <span>
             <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
@@ -1001,7 +1074,6 @@ function updateStats() {
         `;
 
         div.onclick = () => {
-
           activeCountry = country;
 
           banknotes = allBanknotes.filter(n =>
