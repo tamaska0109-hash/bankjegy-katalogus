@@ -836,28 +836,36 @@ function updateStats() {
   Object.entries(counts)
     .sort((a,b)=>b[1]-a[1])
     .slice(0,10)
-    .forEach(([country, count]) => {
+    .forEach(([continent, count]) => {
+
+     const iconMap = {
+      "Europe": "🌍",
+      "Asia": "🌏",
+      "America": "🌎",
+      "Africa": "🌍",
+      "Oceania": "🌏",
+      "Other": "❓"
+    }; 
 
       const div = document.createElement("div");
       div.className = "stat-row";
 
-     div.innerHTML = `
+    div.innerHTML = `
   <span>
-    <img 
-      src="https://flagcdn.com/20x15/${getFlagCode(country)}.png"
-      style="width:18px; vertical-align:middle; margin-right:6px; border-radius:2px;"
-    >
-    ${country}
+    ${iconMap[continent]} ${continent}
   </span>
   <span>${count} db</span>
-  `;
+`;
       
-      div.onclick = () => {
-        banknotes = allBanknotes.filter(n =>
-          normalizeCountry(n.country) === country
-        );
-        renderBanknotes();
-      };
+     div.onclick = () => {
+  banknotes = allBanknotes.filter(note => {
+    const c = normalizeCountry(note.country);
+    const cont = continentMap[c] || "Other";
+    return cont === continent;
+  });
+
+  renderBanknotes();
+};
 
       statsDiv.appendChild(div);
     });
