@@ -266,37 +266,50 @@ h1 {
 
    <script type="module">
 
-     let isAdmin = false;
+let isAdmin = false;
+let worldData = null;
+let map;
+let banknotes = [];
+let allBanknotes = [];
 
-     let worldData = null;
+function normalizeCountry(name) {
+  if (!name) return "";
+  return name.toLowerCase().trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIza...",
+  authDomain: "bankjegy-2c60b.firebaseapp.com",
+  projectId: "bankjegy-2c60b",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.querySelector(".container");
+
+// LOAD MAP
 async function loadWorldMap() {
   const res = await fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json");
   worldData = await res.json();
 }
 
-// 🔥 Firebase import
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// INIT MAP
+function initMap() {
+  map = L.map('map').setView([20, 0], 2);
 
-// 🔑 SAJÁT CONFIG (EZ A TIÉD)
-const firebaseConfig = {
-  apiKey: "AIzaSyDupwhLiT13blp-UtOCy4A57337sQQuHLw",
-  authDomain: "bankjegy-2c60b.firebaseapp.com",
-  projectId: "bankjegy-2c60b",
-  storageBucket: "bankjegy-2c60b.firebasestorage.app",
-  messagingSenderId: "460307693292",
-  appId: "1:460307693292:web:7960652c96dbdc1a9d2fc9"
-};
+  L.tileLayer('[https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+}
 
-// 🚀 Init
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let banknotes = [];
-const container = document.querySelector(".container");
-
-// 🔄 Megjelenítés
+// RENDER
 function renderBanknotes() {
   container.innerHTML = "";
 
@@ -305,435 +318,158 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-  <img src="${note.img || 'https://via.placeholder.com/150'}">
-  <h3>${note.name || "Nincs név"}</h3>
-  <p>${note.country || "Ismeretlen ország"} • ${note.year || "-"}</p>
-  <p>Katalógus: ${note.catalog || "-"}</p>
-  ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
-  ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
-  <p>Állapot: ${note.condition || "-"}</p>
-  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
-`;
+      <img src="${note.img || 'https://via.placeholder.com/150'}">
+      <h3>${note.name || ""}</h3>
+      <p>${note.country || ""} • ${note.year || ""}</p>
+      <p>Katalógus: ${note.catalog || "-"}</p>
+      <p>Állapot: ${note.condition || "-"}</p>
+      ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+    `;
 
     container.appendChild(div);
   });
-  updateTotal();
+
   updateMap();
   updateStats();
-
-  document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
 }
 
-// ➕ Hozzáadás
+// ADD
 window.addBanknote = async function () {
   const note = {
-    name: document.getElementById("nameInput").value || "Ismeretlen",
-    country: document.getElementById("countryInput").value,
-    year: parseInt(document.getElementById("yearInput").value),
-    catalog: document.getElementById("catalogInput").value,
-    condition: document.getElementById("conditionInput").value,
-    value: parseFloat(document.getElementById("valueInput").value),
-    purchase: parseFloat(document.getElementById("purchaseInput").value),
-    img: document.getElementById("imgInput").value
+    name: nameInput.value,
+    country: countryInput.value,
+    year: parseInt(yearInput.value),
+    catalog: catalogInput.value,
+    condition: conditionInput.value,
+    img: imgInput.value
   };
 
   await addDoc(collection(db, "banknotes"), note);
-
   loadBanknotes();
-
-if (localStorage.getItem("isAdmin") === "true") {
-  isAdmin = true;
-}
-  
 };
 
-// 🗑️ Törlés
+// DELETE
 window.deleteNote = async function (id) {
-
-  const confirmDelete = confirm("Biztosan törölni szeretnéd ezt a bankjegyet?");
-
-  if (!confirmDelete) return;
-
+  if (!confirm("Biztos törlés?")) return;
   await deleteDoc(doc(db, "banknotes", id));
   loadBanknotes();
 };
 
-// 🚀 Indítás
-let allBanknotes = [];
-
-// 🔄 módosítjuk a loadBanknotes-t
+// LOAD
 async function loadBanknotes() {
-  const querySnapshot = await getDocs(collection(db, "banknotes"));
+  const snap = await getDocs(collection(db, "banknotes"));
 
   banknotes = [];
   allBanknotes = [];
 
-  querySnapshot.forEach((docu) => {
-    const data = {
-      id: docu.id,
-      ...docu.data()
-    };
-
+  snap.forEach(docu => {
+    const data = { id: docu.id, ...docu.data() };
     banknotes.push(data);
     allBanknotes.push(data);
   });
 
   renderBanknotes();
-}   
-
-// 🔍 Szűrés
-window.applyFilter = function () {
-  const country = document.getElementById("filterCountry").value.toLowerCase();
-  const year = document.getElementById("filterYear").value;
-  const catalog = document.getElementById("filterCatalog").value.toLowerCase();
-
-  banknotes = allBanknotes.filter(note => {
-    return (
-      (!country || (note.country && note.country.toLowerCase().includes(country))) &&
-      (!year || note.year == year) &&
-      (!catalog || (note.catalog && note.catalog.toLowerCase().includes(catalog)))
-    );
-  });
-
-  renderBanknotes();
-};
-
-// 🔄 Reset
-window.resetFilter = function () {
-  banknotes = [...allBanknotes];
-  renderBanknotes();
-};
-
-if (localStorage.getItem("isAdmin") === "true") {
-  isAdmin = true;
 }
 
-loadBanknotes();
-
-function normalizeCountry(name) {
-  if (!name) return "";
-
-  return name
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-
- function getCountryDisplay(name) {
-  if (!name) return { hu: "", flag: "🏳️" };
-
-  const n = name.toLowerCase().trim();
-
-  const data = countryData[n];
-
-  const huName = data?.hu || n;
-  const code = data?.code;
-
-  let flag = "🏳️";
-
-  if (code && code.length === 2) {
-    flag = String.fromCodePoint(
-      code.charCodeAt(0) + 127397,
-      code.charCodeAt(1) + 127397
-    );
-  }
-
-  return { hu: huName, flag: flag };
-}
-     
-  function getFlagEmoji(countryName) {
-  if (!countryName) return "🏳️";
-
-  // alap ISO kódok (fontosabb országok)
-  const codeMap = {
-    "hungary": "HU",
-    "germany": "DE",
-    "france": "FR",
-    "italy": "IT",
-    "spain": "ES",
-    "egypt": "EG",
-    "japan": "JP",
-    "china": "CN",
-    "brazil": "BR",
-    "argentina": "AR",
-    "chile": "CL",
-    "india": "IN",
-    "australia": "AU",
-    "canada": "CA",
-    "united states of america": "US",
-    "united kingdom": "GB"
-  };
-
-  const code = codeMap[countryName];
-
-  if (!code) return "🏳️";
-
-  return String.fromCodePoint(
-    ...[...code].map(c => 127397 + c.charCodeAt())
-  );
-}
-
-
-  function updateTotal() {
-
-  if (!isAdmin) {
-    document.getElementById("totalValue").innerText = "Összérték: 🔒";
-    return;
-  }
-
-  let total = 0;
-
-  banknotes.forEach(note => {
-    total += Number(note.value) || 0;
-  });
-
-  document.getElementById("totalValue").innerText =
-    "Összérték: " + total + " €";
-}
-let map;
-
-  function updateStats() {
-  const statsDiv = document.getElementById("stats");
-  if (!statsDiv) return;
-
-  const counts = {};
-
-  banknotes.forEach(note => {
-    if (!note.country) return;
-
-    const c = note.country
-  .toLowerCase()
-  .trim()
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "");
-    
-    counts[c] = (counts[c] || 0) + 1;
-  });
-
-  // rendezés
-  const sorted = Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10); // TOP 10
-
-  statsDiv.innerHTML = "";
-
-  sorted.forEach(([country, count]) => {
-    const div = document.createElement("div");
-    div.className = "stat-row";
-    const display = getCountryDisplay(country);
-
-div.innerHTML = `<span>${display.flag} ${display.hu}</span><span>${count} db</span>`;
-
-div.style.cursor = "pointer";
-
-div.onclick = function() {
-
-  // 🔥 lista szűrés
-  banknotes = allBanknotes.filter(note => {
-    const mapped = normalizeCountry(note.country);
-    return mapped === country;
-  });
-
-  renderBanknotes();
-
-  map.eachLayer(layer => {
-  if (layer.feature) {
-    const name = layer.feature.properties.name.toLowerCase();
-    if (name === country) {
-      layer.setStyle({
-        weight: 3,
-        color: "#fff"
-      });
-
-      map.fitBounds(layer.getBounds());
-    }
-  }
-});
-
-};
-    statsDiv.appendChild(div);
-  });
-}
-
-function initMap() {
-  map = L.map('map').setView([20, 0], 2);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
-}
-
-await loadWorldMap();
-initMap();
-
-  function updateMap() {
+// MAP UPDATE
+function updateMap() {
   if (!map || !worldData) return;
 
-  // régi rétegek törlése (körök stb.)
   map.eachLayer(layer => {
-    if (layer.options && layer.options.fillColor) {
-      map.removeLayer(layer);
-    }
+    if (layer.feature) map.removeLayer(layer);
   });
 
   const countryCount = {};
 
-    const countryMap = {
-  "Magyarország": "Hungary",
-  "Ausztria": "Austria",
-  "Németország": "Germany",
-  "USA": "United States of America"
-};
-    
-  // darabszám országonként
   banknotes.forEach(note => {
-    if (!note.country) return;
-    
-    const mapped = normalizeCountry(note.country);
-countryCount[mapped] = (countryCount[mapped] || 0) + 1;
+    const c = normalizeCountry(note.country);
+    countryCount[c] = (countryCount[c] || 0) + 1;
   });
 
-  // országok kirajzolása
   L.geoJSON(worldData, {
     style: function(feature) {
-      
-  const name = feature.properties.name
-  .toLowerCase()
-  .trim()  
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "");
-  let count = countryCount[name] || 0;
 
-  let fillColor = "transparent"; // alap
+      const name = normalizeCountry(feature.properties.name);
+      const count = countryCount[name] || 0;
 
-  if (count > 0 && count <= 5) {
-  fillColor = "#fff3bf"; // világos arany
-} else if (count > 5 && count <= 20) {
-  fillColor = "#ffd43b"; // arany
-} else if (count > 20) {
-  fillColor = "#fab005"; // sötétebb arany
-}
+      let fillColor = "transparent";
 
-  return {
-    color: "cc3333",
-    weight: 1,
-    fillColor: fillColor,
-    fillOpacity: count > 0 ? 0.7 : 0
-  };
-},
-    
+      if (count > 0 && count <= 5) fillColor = "#fff3bf";
+      else if (count > 5 && count <= 20) fillColor = "#ffd43b";
+      else if (count > 20) fillColor = "#fab005";
+
+      return {
+        color: "#cc3333",
+        weight: 1,
+        fillColor: fillColor,
+        fillOpacity: count > 0 ? 0.7 : 0
+      };
+    },
+
     onEachFeature: function(feature, layer) {
-  const name = feature.properties.name;
-  const count = countryCount[name] || 0;
 
-  if (count > 0) {
-    const display = getCountryDisplay(name.toLowerCase());
+      const name = normalizeCountry(feature.properties.name);
+      const count = countryCount[name] || 0;
 
-layer.bindPopup(`${display.flag} ${display.hu}: ${count} db`);
-  }
+      if (count > 0) {
+        layer.bindPopup(`${feature.properties.name}: ${count} db`);
+      }
 
-layer.on({
-  mouseover: function(e) {
-    const layer = e.target;
-    layer.setStyle({
-      weight: 3,
-      color: "#ff4444"
-    });
-  },
-  mouseout: function(e) {
-    const layer = e.target;
-    layer.setStyle({
-      weight: 1,
-      color: "#cc3333"
-    });
-  }
-});
+      layer.on({
+        mouseover: e => e.target.setStyle({ weight: 3, color: "#ff4444" }),
+        mouseout: e => e.target.setStyle({ weight: 1, color: "#cc3333" })
+      });
 
-layer.on('click', function() {
-
-  const name = feature.properties.name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-
-  banknotes = allBanknotes.filter(note => {
-    if (!note.country) return false;
-
-    const mapped = normalizeCountry(note.country);
-    return mapped === name;
-  });
-
-  renderBanknotes();
-});
-
-}
+      layer.on('click', function() {
+        banknotes = allBanknotes.filter(note =>
+          normalizeCountry(note.country) === name
+        );
+        renderBanknotes();
+      });
+    }
   }).addTo(map);
 }
 
-window.adminLogin = function() {
-  const password = prompt("Add meg a jelszót:");
+// STATS
+function updateStats() {
+  const statsDiv = document.getElementById("stats");
+  const counts = {};
 
-  if (password === "1234") {
-    isAdmin = true;
+  banknotes.forEach(note => {
+    const c = normalizeCountry(note.country);
+    counts[c] = (counts[c] || 0) + 1;
+  });
 
-    localStorage.setItem("isAdmin", "true"); // 🔥 EZ AZ ÚJ
+  statsDiv.innerHTML = "";
 
-    alert("Admin mód aktiválva");
-    renderBanknotes();
-  } else {
-    alert("Hibás jelszó");
-  }
-};
+  Object.entries(counts)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10)
+    .forEach(([country, count]) => {
 
- window.logout = function() {
-  isAdmin = false;
-  localStorage.removeItem("isAdmin");
+      const div = document.createElement("div");
+      div.className = "stat-row";
 
-  alert("Kijelentkeztél");
-  renderBanknotes();
-};  
+      div.innerHTML = `<span>${country}</span><span>${count} db</span>`;
 
-window.estimateValue = function() {
+      div.onclick = () => {
+        banknotes = allBanknotes.filter(n =>
+          normalizeCountry(n.country) === country
+        );
+        renderBanknotes();
+      };
 
-  const country = document.getElementById("countryInput").value;
-  const year = parseInt(document.getElementById("yearInput").value);
-  const condition = document.getElementById("conditionInput").value;
+      statsDiv.appendChild(div);
+    });
+}
 
-  let base = 5;
+// INIT
+await loadWorldMap();
+initMap();
+loadBanknotes();
 
-const c = normalizeCountry(country);
-
-// ország alapú szorzó (egyszerű, stabil)
-if (c === "united states of america") base = 10;
-else if (c === "hungary") base = 6;
-else if (c === "germany") base = 8;
-
-  // év (régebbi = drágább)
-  let ageFactor = 1;
-  if (year < 1950) ageFactor = 5;
-  else if (year < 1980) ageFactor = 3;
-  else if (year < 2000) ageFactor = 2;
-
-  // állapot
-  let conditionFactor = 1;
-
-if (condition === "UNC") conditionFactor = 4;
-else if (condition === "AU") conditionFactor = 3;
-else if (condition === "XF") conditionFactor = 2.5;
-else if (condition === "VF") conditionFactor = 2;
-else if (condition === "F") conditionFactor = 1.5;
-else if (condition === "VG") conditionFactor = 1.2;
-else if (condition === "G") conditionFactor = 1;
-  const estimated = base * ageFactor * conditionFactor;
-
-  document.getElementById("valueInput").value = estimated.toFixed(2);
-
-  alert("AI becslés kész 💰");
-};     
-     
 </script>
+
 
  </body>
 </html>
