@@ -290,6 +290,11 @@ window.addBanknote = async function () {
 
 // 🗑️ Törlés
 window.deleteNote = async function (id) {
+
+  const confirmDelete = confirm("Biztosan törölni szeretnéd ezt a bankjegyet?");
+
+  if (!confirmDelete) return;
+
   await deleteDoc(doc(db, "banknotes", id));
   loadBanknotes();
 };
