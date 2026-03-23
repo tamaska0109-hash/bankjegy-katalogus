@@ -221,7 +221,7 @@ h1 {
 <div id="map">
 
   <div class="legend">
-    <div><span style="background:#222"></span> 0 db</div>
+    <div><span style="background:white"></span> 0 db</div>
     <div><span style="background:#a8e6cf"></span> 1–5 db</div>
     <div><span style="background:#56c596"></span> 6–20 db</div>
     <div><span style="background:#2e8b57"></span> 20+ db</div>
@@ -584,7 +584,7 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   }
 
   return {
-    color: "#555",
+    color: "cc3333",
     weight: 1,
     fillColor: fillColor,
     fillOpacity: count > 0 ? 0.7 : 0
@@ -604,7 +604,7 @@ layer.on({
     const layer = e.target;
     layer.setStyle({
       weight: 3,
-      color: "#fff"
+      color: "#ff4444"
     });
   },
   mouseout: function(e) {
