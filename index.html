@@ -372,13 +372,42 @@ loadBanknotes();
 function normalizeCountry(name) {
   if (!name) return "";
 
-  return name
-    .toLowerCase()
-    .trim()
-    .replace("magyarország", "hungary")
-    .replace("ausztria", "austria")
-    .replace("németország", "germany")
-    .replace("usa", "united states of america");
+  let n = name.toLowerCase().trim();
+
+  // ékezetek eltávolítása
+  n = n.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // gyakori magyar → angol
+  const map = {
+    "magyarorszag": "hungary",
+    "ausztria": "austria",
+    "nemetorszag": "germany",
+    "franciaorszag": "france",
+    "olaszorszag": "italy",
+    "spanyolorszag": "spain",
+    "portugalia": "portugal",
+    "hollandia": "netherlands",
+    "lengyelorszag": "poland",
+    "csehorszag": "czech republic",
+    "szlovakia": "slovakia",
+    "romania": "romania",
+    "horvatorszag": "croatia",
+    "szerbia": "serbia",
+    "szlovenia": "slovenia",
+    "ukrajna": "ukraine",
+    "oroszorszag": "russia",
+    "torokorszag": "turkey",
+    "egyiptom": "egypt",
+    "kina": "china",
+    "japan": "japan",
+    "india": "india",
+    "usa": "united states of america",
+    "egyesult allamok": "united states of america",
+    "anglia": "united kingdom",
+    "nagy britannia": "united kingdom"
+  };
+
+  return map[n] || n;
 }
 
   function updateTotal() {
@@ -440,7 +469,11 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   // országok kirajzolása
   L.geoJSON(worldData, {
     style: function(feature) {
-  const name = feature.properties.name.toLowerCase();
+      
+  const name = feature.properties.name
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "");
   let count = countryCount[name] || 0;
 
   let fillColor = "#222"; // alap
