@@ -410,58 +410,8 @@ if (localStorage.getItem("isAdmin") === "true") {
 
 loadBanknotes();
 
-function getCountryDisplay(name) {
-  if (!name) return { hu: "", flag: "🏳️" };
 
-  const n = name.toLowerCase().trim();
 
-  // pár fontos kivétel (GeoJSON miatt)
-  const special = {
-    "hungary": { hu: "Magyarország", code: "HU" },
-    "germany": { hu: "Németország", code: "DE" },
-    "france": { hu: "Franciaország", code: "FR" },
-    "italy": { hu: "Olaszország", code: "IT" },
-    "spain": { hu: "Spanyolország", code: "ES" },
-    "egypt": { hu: "Egyiptom", code: "EG" },
-    "japan": { hu: "Japán", code: "JP" },
-    "china": { hu: "Kína", code: "CN" },
-    "brazil": { hu: "Brazília", code: "BR" },
-    "argentina": { hu: "Argentína", code: "AR" },
-    "chile": { hu: "Chile", code: "CL" },
-    "india": { hu: "India", code: "IN" },
-    "australia": { hu: "Ausztrália", code: "AU" },
-    "canada": { hu: "Kanada", code: "CA" },
-    "united states": { hu: "USA", code: "US" },
-    "united states of america": { hu: "USA", code: "US" },
-    "united kingdom": { hu: "Egyesült Királyság", code: "GB" },
-    "russia": { hu: "Oroszország", code: "RU" },
-    "czechia": { hu: "Csehország", code: "CZ" }
-  };
-
-  const data = special[n];
-
-  // magyar név
-  const huName = data?.hu || n.charAt(0).toUpperCase() + n.slice(1);
-
-  // ISO kód fallback (nagyon fontos!)
-  let code = data?.code;
-
-  if (!code) {
-    // próbáljuk generálni (pl: germany → GE ❌ de legalább nem törik)
-    code = n.substring(0, 2).toUpperCase();
-  }
-
-  let flag = "🏳️";
-
-  if (code && code.length === 2) {
-    flag = String.fromCodePoint(
-      code.charCodeAt(0) + 127397,
-      code.charCodeAt(1) + 127397
-    );
-  }
-
-  return { hu: huName, flag: flag };
-}
 
  function getCountryDisplay(name) {
   if (!name) return { hu: "", flag: "🏳️" };
