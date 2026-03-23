@@ -743,26 +743,16 @@ async function loadBanknotes() {
 
 // MAP UPDATE
 function updateMap() {
-
-  const iconMap = {
-      "Europe": "🌍",
-      "Asia": "🌏",
-      "America": "🌎",
-      "Africa": "🌍",
-      "Oceania": "🌏",
-      "Other": "❓"
-    }; 
-  
   if (!map || !worldData) return;
 
-  // régi layer-ek törlése
+  // 🔥 régi layer-ek törlése
   map.eachLayer(layer => {
     if (layer.feature) map.removeLayer(layer);
   });
 
   const countryCount = {};
 
-  // 🔥 adat feldolgozás (KÖZPONTI NORMALIZÁLÁS)
+  // 🔥 ország darabszám
   banknotes.forEach(note => {
     if (!note.country) return;
 
@@ -811,6 +801,8 @@ function updateMap() {
       layer.on('click', function() {
 
         statsMode = "country";
+        activeCountry = null;
+        activeContinent = null;
 
         const mapName = normalizeToEnglish(feature.properties.name);
 
@@ -827,6 +819,7 @@ function updateMap() {
 
   }).addTo(map);
 }
+     
 // STATS
 function updateStats() {
 
@@ -842,7 +835,90 @@ function updateStats() {
     "Other": "❓"
   };
 
-  const continentMap = window.continentMap || {};
+  const continentMap = {
+
+  // 🌍 EUROPE
+  "hungary":"Europe","magyarorszag":"Europe",
+  "germany":"Europe","nemetorszag":"Europe",
+  "austria":"Europe","ausztria":"Europe",
+  "france":"Europe","spain":"Europe","italy":"Europe","portugal":"Europe",
+  "netherlands":"Europe","hollandia":"Europe",
+  "belgium":"Europe","luxembourg":"Europe",
+  "poland":"Europe","lengyelorszag":"Europe",
+  "czechia":"Europe","csehorszag":"Europe",
+  "slovakia":"Europe","szlovakia":"Europe",
+  "romania":"Europe","bulgaria":"Europe",
+  "croatia":"Europe","horvatorszag":"Europe",
+  "serbia":"Europe","slovenia":"Europe",
+  "bosnia":"Europe","montenegro":"Europe",
+  "albania":"Europe","north macedonia":"Europe",
+  "greece":"Europe","gorogorszag":"Europe",
+  "turkey":"Europe","torokorszag":"Europe",
+  "ukraine":"Europe","belarus":"Europe",
+  "lithuania":"Europe","latvia":"Europe","estonia":"Europe",
+  "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
+  "ireland":"Europe","iceland":"Europe",
+  "united kingdom":"Europe","uk":"Europe",
+  "malta":"Europe","andorra":"Europe","monaco":"Europe",
+  "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
+  "switzerland":"Europe",
+
+  // 🌏 ASIA
+  "china":"Asia","kina":"Asia",
+  "japan":"Asia","india":"Asia","pakistan":"Asia","bangladesh":"Asia",
+  "sri lanka":"Asia","nepal":"Asia","bhutan":"Asia",
+  "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
+  "philippines":"Asia","malaysia":"Asia","singapore":"Asia",
+  "laos":"Asia","cambodia":"Asia","myanmar":"Asia",
+  "south korea":"Asia","north korea":"Asia",
+  "iran":"Asia","iraq":"Asia","syria":"Asia","lebanon":"Asia",
+  "jordan":"Asia","israel":"Asia","saudi arabia":"Asia",
+  "uae":"Asia","qatar":"Asia","kuwait":"Asia","oman":"Asia","yemen":"Asia",
+  "kazakhstan":"Asia","uzbekistan":"Asia","turkmenistan":"Asia",
+  "kyrgyzstan":"Asia","tajikistan":"Asia",
+  "armenia":"Asia","azerbaijan":"Asia","georgia":"Asia",
+
+  // 🌎 AMERICA
+  "usa":"America","united states":"America","united states of america":"America","egyesult allamok":"America",
+  "canada":"America","mexico":"America",
+  "guatemala":"America","belize":"America","honduras":"America",
+  "nicaragua":"America","costa rica":"America","panama":"America",
+  "cuba":"America","haiti":"America","dominican republic":"America",
+  "jamaica":"America","bahamas":"America",
+  "brazil":"America","brazilia":"America","argentina":"America",
+  "chile":"America","peru":"America","colombia":"America",
+  "venezuela":"America","ecuador":"America","bolivia":"America",
+  "paraguay":"America","uruguay":"America","guyana":"America","suriname":"America",
+
+  // 🌍 AFRICA
+  "egypt":"Africa","egyiptom":"Africa",
+  "south africa":"Africa","nigeria":"Africa","kenya":"Africa","ethiopia":"Africa",
+  "morocco":"Africa","marokko":"Africa",
+  "tunisia":"Africa","algeria":"Africa",
+  "ghana":"Africa","uganda":"Africa","tanzania":"Africa",
+  "angola":"Africa","zambia":"Africa","zimbabwe":"Africa",
+  "botswana":"Africa","namibia":"Africa",
+  "mozambique":"Africa","madagascar":"Africa",
+  "senegal":"Africa","mali":"Africa","niger":"Africa","chad":"Africa",
+  "sudan":"Africa","south sudan":"Africa",
+  "somalia":"Africa","djibouti":"Africa",
+  "rwanda":"Africa","burundi":"Africa",
+  "cameroon":"Africa","gabon":"Africa","congo":"Africa",
+  "ivory coast":"Africa","liberia":"Africa",
+  "sierra leone":"Africa","guinea":"Africa",
+  "gambia":"Africa","mauritania":"Africa",
+  "lesotho":"Africa","eswatini":"Africa",
+  "seychelles":"Africa","comoros":"Africa","mauritius":"Africa",
+
+  // 🌏 OCEANIA
+  "australia":"Oceania","new zealand":"Oceania",
+  "papua new guinea":"Oceania","fiji":"Oceania",
+  "solomon islands":"Oceania","vanuatu":"Oceania",
+  "samoa":"Oceania","tonga":"Oceania",
+  "kiribati":"Oceania","micronesia":"Oceania",
+  "palau":"Oceania","marshall islands":"Oceania",
+  "nauru":"Oceania","tuvalu":"Oceania"
+};
 
   // 🌍 CONTINENT MODE
   if (statsMode === "continent") {
@@ -853,9 +929,9 @@ function updateStats() {
       if (!note.country) return;
 
       const c = normalizeToEnglish(note.country);
-      const cont = continentMap[c] || "Other";
+      const continent = continentMap[c] || "Other";
 
-      counts[cont] = (counts[cont] || 0) + 1;
+      counts[continent] = (counts[continent] || 0) + 1;
     });
 
     Object.entries(counts)
