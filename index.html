@@ -478,6 +478,9 @@ function normalizeCountry(name) {
   };
 }
   function getFlagEmoji(countryName) {
+  if (!countryName) return "🏳️";
+
+  // alap ISO kódok (fontosabb országok)
   const codeMap = {
     "hungary": "HU",
     "germany": "DE",
@@ -485,6 +488,14 @@ function normalizeCountry(name) {
     "italy": "IT",
     "spain": "ES",
     "egypt": "EG",
+    "japan": "JP",
+    "china": "CN",
+    "brazil": "BR",
+    "argentina": "AR",
+    "chile": "CL",
+    "india": "IN",
+    "australia": "AU",
+    "canada": "CA",
     "united states of america": "US",
     "united kingdom": "GB"
   };
@@ -496,7 +507,8 @@ function normalizeCountry(name) {
   return String.fromCodePoint(
     ...[...code].map(c => 127397 + c.charCodeAt())
   );
-}   
+}
+
 
   function updateTotal() {
 
