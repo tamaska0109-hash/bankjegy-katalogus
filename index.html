@@ -470,8 +470,37 @@ let map;
     const div = document.createElement("div");
     div.className = "stat-row";
     div.innerHTML = `<span>${country}</span><span>${count} db</span>`;
+
+div.style.cursor = "pointer";
+
+div.onclick = function() {
+
+  // 🔥 lista szűrés
+  banknotes = allBanknotes.filter(note => {
+    const mapped = normalizeCountry(note.country);
+    return mapped === country;
+  });
+
+  renderBanknotes();
+
+};
     statsDiv.appendChild(div);
   });
+
+map.eachLayer(layer => {
+  if (layer.feature) {
+    const name = layer.feature.properties.name.toLowerCase();
+    if (name === country) {
+      layer.setStyle({
+        weight: 3,
+        color: "#fff"
+      });
+
+      map.fitBounds(layer.getBounds());
+    }
+  }
+});
+    
 }
 
 function initMap() {
