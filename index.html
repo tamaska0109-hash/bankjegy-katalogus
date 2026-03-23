@@ -754,8 +754,17 @@ function updateStats() {
       const div = document.createElement("div");
       div.className = "stat-row";
 
-      div.innerHTML = `<span>${country}</span><span>${count} db</span>`;
-
+     div.innerHTML = `
+  <span>
+    <img 
+      src="https://flagcdn.com/20x15/${getFlagCode(country)}.png"
+      style="width:18px; vertical-align:middle; margin-right:6px; border-radius:2px;"
+    >
+    ${country}
+  </span>
+  <span>${count} db</span>
+  `;
+      
       div.onclick = () => {
         banknotes = allBanknotes.filter(n =>
           normalizeCountry(n.country) === country
