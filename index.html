@@ -576,12 +576,12 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   let fillColor = "#transparent"; // alap
 
   if (count > 0 && count <= 5) {
-    fillColor = "#a8e6cf";
-  } else if (count > 5 && count <= 20) {
-    fillColor = "#56c596";
-  } else if (count > 20) {
-    fillColor = "#2e8b57";
-  }
+  fillColor = "#fff3bf"; // világos arany
+} else if (count > 5 && count <= 20) {
+  fillColor = "#ffd43b"; // arany
+} else if (count > 20) {
+  fillColor = "#fab005"; // sötétebb arany
+}
 
   return {
     color: "cc3333",
