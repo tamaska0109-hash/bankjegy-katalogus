@@ -215,6 +215,7 @@ h1 {
     <option value="VF">VF</option>
   </select>
   <input id="valueInput" placeholder="Érték (€)">
+  <button onclick="estimateValue()">🤖 AI becslés</button>  
   <input id="purchaseInput" placeholder="Beszerzési ár (€)">  
   <input id="imgInput" placeholder="Kép link">
 
@@ -510,7 +511,43 @@ window.adminLogin = function() {
 
   alert("Kijelentkeztél");
   renderBanknotes();
-};    
+};  
+
+window.estimateValue = function() {
+
+  const country = document.getElementById("countryInput").value;
+  const year = parseInt(document.getElementById("yearInput").value);
+  const condition = document.getElementById("conditionInput").value;
+
+  let base = 5;
+
+  // ország alapú szorzó
+  if (country === "USA") base = 10;
+  if (country === "Hungary") base = 6;
+  if (country === "Germany") base = 8;
+
+  // év (régebbi = drágább)
+  let ageFactor = 1;
+  if (year < 1950) ageFactor = 5;
+  else if (year < 1980) ageFactor = 3;
+  else if (year < 2000) ageFactor = 2;
+
+  // állapot
+  let conditionFactor = 1;
+
+if (condition === "UNC") conditionFactor = 4;
+else if (condition === "AU") conditionFactor = 3;
+else if (condition === "XF") conditionFactor = 2.5;
+else if (condition === "VF") conditionFactor = 2;
+else if (condition === "F") conditionFactor = 1.5;
+else if (condition === "VG") conditionFactor = 1.2;
+else if (condition === "G") conditionFactor = 1;
+  const estimated = base * ageFactor * conditionFactor;
+
+  document.getElementById("valueInput").value = estimated.toFixed(2);
+
+  alert("AI becslés kész 💰");
+};     
      
 </script>
 
