@@ -324,20 +324,20 @@ h1 {
 
   <div class="container"></div>
 
-   <script type="module">
+<script type="module">
 
 let isAdmin = false;
 let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
-     
-let activeContinent = null;  
-let activeLegend = null; 
-let statsMode = "continent-drill"; 
-let activeCountry = null;     
 
-// ADMIN STATE
+let activeContinent = null;
+let activeLegend = null;
+let statsMode = "continent";
+let activeCountry = null;
+
+// ADMIN
 if (localStorage.getItem("isAdmin") === "true") {
   isAdmin = true;
 }
@@ -350,283 +350,38 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-  // TOENGLISH   
-  function normalizeToEnglish(name) {
-
+// TO ENGLISH
+function normalizeToEnglish(name) {
   const map = {
-
-    // magyar → angol
-    "magyarorszag": "hungary",
-    "nemetorszag": "germany",
-    "ausztria": "austria",
-    "olaszorszag": "italy",
-    "spanyolorszag": "spain",
-    "franciaorszag": "france",
-    "hollandia": "netherlands",
-    "lengyelorszag": "poland",
-    "csehorszag": "czechia",
-    "szlovakia": "slovakia",
-    "romania": "romania",
-    "horvatorszag": "croatia",
-    "szerbia": "serbia",
-    "gorogorszag": "greece",
-    "torokorszag": "turkey",
-    "kina": "china",
-    "japan": "japan",
-
-    // USA variációk
-    "usa": "united states of america",
-    "egyesult allamok": "united states of america"
+    "magyarorszag":"hungary",
+    "nemetorszag":"germany",
+    "ausztria":"austria",
+    "kina":"china",
+    "usa":"united states of america",
+    "egyesult allamok":"united states of america"
   };
-
   const n = normalizeCountry(name);
-
   return map[n] || n;
-}   
-
- // FLAGCODE
- function getFlagCode(name) {
-
-  const n = normalizeCountry(name);
-
-  const map = {
-
-    // EUROPE (FULL)
-    "hungary":"hu","magyarorszag":"hu",
-    "germany":"de","nemetorszag":"de",
-    "austria":"at","ausztria":"at",
-    "switzerland":"ch",
-    "france":"fr",
-    "spain":"es",
-    "italy":"it",
-    "portugal":"pt",
-    "netherlands":"nl","hollandia":"nl",
-    "belgium":"be",
-    "luxembourg":"lu",
-    "poland":"pl","lengyelorszag":"pl",
-    "czechia":"cz","csehorszag":"cz",
-    "slovakia":"sk","szlovakia":"sk",
-    "romania":"ro",
-    "bulgaria":"bg",
-    "croatia":"hr","horvatorszag":"hr",
-    "serbia":"rs",
-    "slovenia":"si",
-    "bosnia":"ba","bosnia and herzegovina":"ba",
-    "montenegro":"me",
-    "albania":"al",
-    "north macedonia":"mk","macedonia":"mk",
-    "greece":"gr","gorogorszag":"gr",
-    "turkey":"tr","torokorszag":"tr",
-    "ukraine":"ua",
-    "belarus":"by",
-    "lithuania":"lt",
-    "latvia":"lv",
-    "estonia":"ee",
-    "norway":"no",
-    "sweden":"se",
-    "finland":"fi",
-    "denmark":"dk",
-    "ireland":"ie",
-    "united kingdom":"gb","uk":"gb","england":"gb",
-    "scotland":"gb","wales":"gb",
-    "iceland":"is",
-    "malta":"mt",
-    "andorra":"ad",
-    "monaco":"mc",
-    "san marino":"sm",
-    "liechtenstein":"li",
-    "vatican":"va",
-
-    // AMERICA (FULL)
-    "usa":"us","united states":"us","united states of america":"us","egyesult allamok":"us",
-    "canada":"ca",
-    "mexico":"mx",
-    "guatemala":"gt",
-    "belize":"bz",
-    "el salvador":"sv",
-    "honduras":"hn",
-    "nicaragua":"ni",
-    "costa rica":"cr",
-    "panama":"pa",
-    "cuba":"cu",
-    "haiti":"ht",
-    "dominican republic":"do",
-    "jamaica":"jm",
-    "bahamas":"bs",
-    "barbados":"bb",
-    "trinidad and tobago":"tt",
-    "antigua and barbuda":"ag",
-    "saint lucia":"lc",
-    "grenada":"gd",
-    "saint vincent":"vc",
-    "dominica":"dm",
-    "brazil":"br","brazilia":"br",
-    "argentina":"ar",
-    "chile":"cl",
-    "peru":"pe",
-    "colombia":"co",
-    "venezuela":"ve",
-    "ecuador":"ec",
-    "bolivia":"bo",
-    "paraguay":"py",
-    "uruguay":"uy",
-    "guyana":"gy",
-    "suriname":"sr",
-    
-     // ASIA (FULL)
-    "china":"cn","kina":"cn",
-    "japan":"jp",
-    "south korea":"kr","del korea":"kr",
-    "north korea":"kp",
-    "mongolia":"mn",
-    "india":"in",
-    "pakistan":"pk",
-    "bangladesh":"bd",
-    "sri lanka":"lk",
-    "nepal":"np",
-    "bhutan":"bt",
-    "maldives":"mv",
-    "indonesia":"id",
-    "thailand":"th",
-    "vietnam":"vn",
-    "philippines":"ph",
-    "malaysia":"my",
-    "singapore":"sg",
-    "laos":"la",
-    "cambodia":"kh",
-    "myanmar":"mm",
-    "brunei":"bn",
-    "timor leste":"tl",
-    "afghanistan":"af",
-    "iran":"ir",
-    "iraq":"iq",
-    "syria":"sy",
-    "lebanon":"lb",
-    "jordan":"jo",
-    "israel":"il",
-    "palestine":"ps",
-    "saudi arabia":"sa",
-    "uae":"ae","united arab emirates":"ae",
-    "qatar":"qa",
-    "kuwait":"kw",
-    "oman":"om",
-    "yemen":"ye",
-    "kazakhstan":"kz",
-    "uzbekistan":"uz",
-    "turkmenistan":"tm",
-    "kyrgyzstan":"kg",
-    "tajikistan":"tj",
-    "armenia":"am",
-    "azerbaijan":"az",
-    "georgia":"ge",
-    "cyprus":"cy",
-
-    // AFRICA (FULL)
-    "egypt":"eg","egyiptom":"eg",
-    "south africa":"za","del afrika":"za",
-    "nigeria":"ng",
-    "kenya":"ke",
-    "ethiopia":"et",
-    "morocco":"ma","marokko":"ma",
-    "tunisia":"tn",
-    "algeria":"dz",
-    "ghana":"gh",
-    "uganda":"ug",
-    "tanzania":"tz",
-    "angola":"ao",
-    "zambia":"zm",
-    "zimbabwe":"zw",
-    "botswana":"bw",
-    "namibia":"na",
-    "mozambique":"mz",
-    "madagascar":"mg",
-    "senegal":"sn",
-    "mali":"ml",
-    "burkina faso":"bf",
-    "niger":"ne",
-    "chad":"td",
-    "sudan":"sd",
-    "south sudan":"ss",
-    "eritrea":"er",
-    "somalia":"so",
-    "djibouti":"dj",
-    "rwanda":"rw",
-    "burundi":"bi",
-    "cameroon":"cm",
-    "central african republic":"cf",
-    "equatorial guinea":"gq",
-    "gabon":"ga",
-    "congo":"cg",
-    "democratic republic of congo":"cd",
-    "ivory coast":"ci","cote divoire":"ci",
-    "liberia":"lr",
-    "sierra leone":"sl",
-    "guinea":"gn",
-    "guinea bissau":"gw",
-    "gambia":"gm",
-    "cape verde":"cv",
-    "mauritania":"mr",
-    "lesotho":"ls",
-    "eswatini":"sz","swaziland":"sz",
-    "seychelles":"sc",
-    "comoros":"km",
-    "mauritius":"mu",
-   
-     // OCEANIA (FULL)
-    "australia":"au",
-    "new zealand":"nz",
-    "papua new guinea":"pg",
-    "fiji":"fj",
-    "solomon islands":"sb",
-    "vanuatu":"vu",
-    "samoa":"ws",
-    "tonga":"to",
-    "kiribati":"ki",
-    "micronesia":"fm",
-    "palau":"pw",
-    "marshall islands":"mh",
-    "nauru":"nr",
-    "tuvalu":"tv",
-
-  };
-
-  return map[n] || "";
-}
-     
- // COUNTRYCODE    
- function getCountryCode(name) {
-  const map = {
-    "hungary": "hu",
-    "germany": "de",
-    "austria": "at",
-    "italy": "it",
-    "spain": "es",
-    "france": "fr",
-    "netherlands": "nl",
-    "poland": "pl",
-    "czechia": "cz",
-    "slovakia": "sk",
-    "romania": "ro",
-    "croatia": "hr",
-    "serbia": "rs",
-    "china": "cn",
-    "japan": "jp",
-    "united states of america": "us",
-    "canada": "ca",
-    "mexico": "mx",
-    "brazil": "br",
-    "argentina": "ar",
-    "australia": "au",
-    "egypt": "eg",
-    "turkey": "tr",
-    "greece": "gr"
-  };
-
-  const normalized = normalizeCountry(name);
-  return map[normalized] || "";
 }
 
-     
+// 🌍 CONTINENT MAP (FULL)
+window.continentMap = {
+  "hungary":"Europe","germany":"Europe","austria":"Europe","france":"Europe","italy":"Europe","spain":"Europe",
+  "china":"Asia","japan":"Asia","india":"Asia","south korea":"Asia",
+  "united states":"America","united states of america":"America","canada":"America","brazil":"America",
+  "egypt":"Africa","south africa":"Africa","nigeria":"Africa",
+  "australia":"Oceania","new zealand":"Oceania"
+};
+
+// FLAG
+function getFlagCode(name) {
+  const map = {
+    "hungary":"hu","germany":"de","austria":"at","china":"cn","japan":"jp",
+    "united states of america":"us","brazil":"br","australia":"au","egypt":"eg"
+  };
+  return map[normalizeCountry(name)] || "";
+}
+
 // FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -651,10 +406,7 @@ async function loadWorldMap() {
 // MAP INIT
 function initMap() {
   map = L.map('map').setView([20, 0], 2);
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 }
 
 // RENDER
@@ -666,64 +418,133 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-      <img src="${note.img || 'https://via.placeholder.com/150'}">
+      <img src="${note.img || ''}">
       <h3>${note.name || ""}</h3>
-      <p style="text-align:center;">
- <img 
-  src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
-  style="width:28px; display:block; margin:0 auto 5px auto; border-radius:3px;"
- >
-  <span style="font-size:12px; color:#ccc;">
-    ${note.country || ""}
-  </span>
-</p>
-
-<p style="margin-top:5px;">
-  ${note.year || ""}
-</p>
-      <p>Katalógus: ${note.catalog || "-"}</p>
-
-      ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
-      ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
-
-      <p>Állapot: ${note.condition || "-"}</p>
-
-      ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+      <p>${note.country || ""}</p>
+      <p>${note.year || ""}</p>
     `;
 
     container.appendChild(div);
   });
 
-  document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
-
   updateMap();
   updateStats();
-  updateTotal();
 }
 
-// ADD
-window.addBanknote = async function () {
-  const note = {
-    name: nameInput.value,
-    country: countryInput.value,
-    year: parseInt(yearInput.value),
-    catalog: catalogInput.value,
-    condition: conditionInput.value,
-    value: parseFloat(valueInput.value),
-    purchase: parseFloat(purchaseInput.value),
-    img: imgInput.value
-  };
+// MAP
+function updateMap() {
+  if (!map || !worldData) return;
 
-  await addDoc(collection(db, "banknotes"), note);
-  loadBanknotes();
-};
+  map.eachLayer(l => { if (l.feature) map.removeLayer(l); });
 
-// DELETE
-window.deleteNote = async function (id) {
-  if (!confirm("Biztos törlés?")) return;
-  await deleteDoc(doc(db, "banknotes", id));
-  loadBanknotes();
-};
+  const counts = {};
+
+  allBanknotes.forEach(n => {
+    const c = normalizeToEnglish(n.country);
+    counts[c] = (counts[c] || 0) + 1;
+  });
+
+  L.geoJSON(worldData, {
+    style: f => {
+      const name = normalizeToEnglish(f.properties.name);
+      const count = counts[name] || 0;
+
+      let fill = "transparent";
+      if (count > 0 && count <= 5) fill = "#fff3b0";
+      else if (count <= 20) fill = "#ffa94d";
+      else if (count > 20) fill = "#ff8c00";
+
+      if (activeCountry === name) {
+        return { color: "red", weight: 3, fillColor: fill, fillOpacity: 1 };
+      }
+
+      return { color:"#cc3333", fillColor:fill, fillOpacity: count ? 0.8 : 0 };
+    },
+
+    onEachFeature: (f, layer) => {
+      const name = normalizeToEnglish(f.properties.name);
+
+      layer.on('click', () => {
+        activeCountry = name;
+        statsMode = "continent-drill";
+
+        banknotes = allBanknotes.filter(n =>
+          normalizeToEnglish(n.country) === name
+        );
+
+        renderBanknotes();
+      });
+    }
+
+  }).addTo(map);
+}
+
+// STATS
+function updateStats() {
+
+  const statsDiv = document.getElementById("stats");
+  statsDiv.innerHTML = "";
+
+  if (statsMode === "continent") {
+
+    const counts = {};
+
+    allBanknotes.forEach(n => {
+      const c = normalizeToEnglish(n.country);
+      const cont = continentMap[c] || "Other";
+      counts[cont] = (counts[cont] || 0) + 1;
+    });
+
+    Object.entries(counts).forEach(([cont, count]) => {
+
+      const div = document.createElement("div");
+      div.className = "stat-row";
+      div.innerText = cont + " (" + count + ")";
+
+      div.onclick = () => {
+        activeContinent = cont;
+        statsMode = "continent-drill";
+
+        banknotes = allBanknotes.filter(n =>
+          (continentMap[normalizeToEnglish(n.country)] || "Other") === cont
+        );
+
+        renderBanknotes();
+      };
+
+      statsDiv.appendChild(div);
+    });
+
+  } else {
+
+    const counts = {};
+
+    allBanknotes.forEach(n => {
+      const c = normalizeToEnglish(n.country);
+      if ((continentMap[c] || "Other") !== activeContinent) return;
+      counts[c] = (counts[c] || 0) + 1;
+    });
+
+    Object.entries(counts).forEach(([country, count]) => {
+
+      const div = document.createElement("div");
+      div.className = "stat-row";
+      div.innerText = country + " (" + count + ")";
+
+      div.onclick = () => {
+        activeCountry = country;
+
+        banknotes = allBanknotes.filter(n =>
+          normalizeToEnglish(n.country) === country
+        );
+
+        renderBanknotes();
+      };
+
+      statsDiv.appendChild(div);
+    });
+  }
+}
 
 // LOAD
 async function loadBanknotes() {
@@ -741,472 +562,12 @@ async function loadBanknotes() {
   renderBanknotes();
 }
 
-// MAP UPDATE
-function updateMap() {
-  if (!map || !worldData) return;
-
-  map.eachLayer(layer => {
-    if (layer.feature) map.removeLayer(layer);
-  });
-
-  const countryCount = {};
-
-  allBanknotes.forEach(note => {
-    if (!note.country) return;
-
-    const c = normalizeToEnglish(note.country);
-    countryCount[c] = (countryCount[c] || 0) + 1;
-  });
-
-  L.geoJSON(worldData, {
-
-    style: function(feature) {
-
-      const name = normalizeToEnglish(feature.properties.name);
-      const count = countryCount[name] || 0;
-
-      let fillColor = "transparent";
-
-      if (count > 0 && count <= 5) fillColor = "#fff3b0";
-      else if (count > 5 && count <= 20) fillColor = "#ffa94d";
-      else if (count > 20) fillColor = "#ff8c00";
-
-      // 🔥 kontinens szűrés halványítás
-      if (activeContinent) {
-        const c = normalizeToEnglish(feature.properties.name);
-        const cont = continentMap[c] || "Other";
-
-        if (cont !== activeContinent) {
-          return {
-            color: "#333",
-            weight: 1,
-            fillColor: "#111",
-            fillOpacity: 0.1
-          };
-        }
-      }
-
-      // 🔥 ország kiemelés
-      if (activeCountry === name) {
-        return {
-          color: "#ff0000",
-          weight: 3,
-          fillColor: fillColor,
-          fillOpacity: 1
-        };
-      }
-
-      return {
-        color: "#cc3333",
-        weight: 1,
-        fillColor: fillColor,
-        fillOpacity: count > 0 ? 0.8 : 0
-      };
-    },
-
-    onEachFeature: function(feature, layer) {
-
-      const name = normalizeToEnglish(feature.properties.name);
-      const count = countryCount[name] || 0;
-
-      if (count > 0) {
-        layer.bindPopup(`${feature.properties.name}: ${count} db`);
-      }
-
-      layer.on('click', function() {
-
-        activeCountry = name;
-
-        // 🔥 stat vált
-        statsMode = "continent-drill";
-
-        // 🔥 kontinenst is beállítjuk
-        activeContinent = continentMap[name] || null;
-
-        banknotes = allBanknotes.filter(note =>
-          normalizeToEnglish(note.country) === name
-        );
-
-        renderBanknotes();
-      });
-    }
-
-  }).addTo(map);
-}
-// STATS
-function updateStats() {
-
-  const statsDiv = document.getElementById("stats");
-  statsDiv.innerHTML = "";
-
-  const iconMap = {
-    "Europe": "🌍 Európa",
-    "Asia": "🌏 Ázsia",
-    "America": "🌎 Amerika",
-    "Africa": "🌍 Afrika",
-    "Oceania": "🌏 Óceánia",
-    "Other": "❓ Egyéb"
-  };
-
-  // 🔥 VALÓBAN FULL continentMap
-  window.continentMap = {
-
-    // EUROPE (teljes)
-    "hungary":"Europe","magyarorszag":"Europe",
-    "germany":"Europe","nemetorszag":"Europe",
-    "austria":"Europe","ausztria":"Europe",
-    "france":"Europe","spain":"Europe","italy":"Europe","portugal":"Europe",
-    "netherlands":"Europe","hollandia":"Europe",
-    "belgium":"Europe","luxembourg":"Europe",
-    "poland":"Europe","lengyelorszag":"Europe",
-    "czechia":"Europe","csehorszag":"Europe",
-    "slovakia":"Europe","szlovakia":"Europe",
-    "romania":"Europe","bulgaria":"Europe",
-    "croatia":"Europe","horvatorszag":"Europe",
-    "serbia":"Europe","slovenia":"Europe",
-    "bosnia":"Europe","montenegro":"Europe",
-    "albania":"Europe","north macedonia":"Europe",
-    "greece":"Europe","gorogorszag":"Europe",
-    "turkey":"Europe","torokorszag":"Europe",
-    "ukraine":"Europe","belarus":"Europe",
-    "lithuania":"Europe","latvia":"Europe","estonia":"Europe",
-    "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
-    "ireland":"Europe","iceland":"Europe",
-    "united kingdom":"Europe","uk":"Europe",
-    "switzerland":"Europe",
-
-    // ASIA (MOST MÁR FULL)
-    "china":"Asia","kina":"Asia",
-    "japan":"Asia",
-    "india":"Asia",
-    "pakistan":"Asia",
-    "bangladesh":"Asia",
-    "sri lanka":"Asia",
-    "nepal":"Asia",
-    "bhutan":"Asia",
-    "indonesia":"Asia",
-    "thailand":"Asia",
-    "vietnam":"Asia",
-    "philippines":"Asia",
-    "malaysia":"Asia",
-    "singapore":"Asia",
-    "laos":"Asia",
-    "cambodia":"Asia",
-    "myanmar":"Asia",
-    "south korea":"Asia",
-    "north korea":"Asia",
-    "iran":"Asia",
-    "iraq":"Asia",
-    "syria":"Asia",
-    "lebanon":"Asia",
-    "jordan":"Asia",
-    "israel":"Asia",
-    "saudi arabia":"Asia",
-    "uae":"Asia",
-    "qatar":"Asia",
-    "kuwait":"Asia",
-    "oman":"Asia",
-    "yemen":"Asia",
-    "kazakhstan":"Asia",
-    "uzbekistan":"Asia",
-    "turkmenistan":"Asia",
-    "kyrgyzstan":"Asia",
-    "tajikistan":"Asia",
-    "armenia":"Asia",
-    "azerbaijan":"Asia",
-    "georgia":"Asia",
-
-    // AMERICA (FULL)
-    "usa":"America","united states":"America","united states of america":"America",
-    "canada":"America",
-    "mexico":"America",
-    "guatemala":"America",
-    "belize":"America",
-    "honduras":"America",
-    "nicaragua":"America",
-    "costa rica":"America",
-    "panama":"America",
-    "cuba":"America",
-    "haiti":"America",
-    "dominican republic":"America",
-    "jamaica":"America",
-    "bahamas":"America",
-    "brazil":"America","brazilia":"America",
-    "argentina":"America",
-    "chile":"America",
-    "peru":"America",
-    "colombia":"America",
-    "venezuela":"America",
-    "ecuador":"America",
-    "bolivia":"America",
-    "paraguay":"America",
-    "uruguay":"America",
-    "guyana":"America",
-    "suriname":"America",
-
-    // AFRICA (FULL)
-    "egypt":"Africa","egyiptom":"Africa",
-    "south africa":"Africa",
-    "nigeria":"Africa",
-    "kenya":"Africa",
-    "ethiopia":"Africa",
-    "morocco":"Africa","marokko":"Africa",
-    "tunisia":"Africa",
-    "algeria":"Africa",
-    "ghana":"Africa",
-    "uganda":"Africa",
-    "tanzania":"Africa",
-    "angola":"Africa",
-    "zambia":"Africa",
-    "zimbabwe":"Africa",
-    "botswana":"Africa",
-    "namibia":"Africa",
-    "mozambique":"Africa",
-    "madagascar":"Africa",
-    "senegal":"Africa",
-    "mali":"Africa",
-    "niger":"Africa",
-    "chad":"Africa",
-    "sudan":"Africa",
-    "somalia":"Africa",
-    "rwanda":"Africa",
-    "cameroon":"Africa",
-
-    // OCEANIA
-    "australia":"Oceania",
-    "new zealand":"Oceania",
-    "fiji":"Oceania",
-    "papua new guinea":"Oceania"
-  };
-
-  const countryHu = {
-    "hungary":"Magyarország",
-    "germany":"Németország",
-    "austria":"Ausztria",
-    "china":"Kína",
-    "japan":"Japán",
-    "india":"India",
-    "united states of america":"USA",
-    "brazil":"Brazília",
-    "egypt":"Egyiptom",
-    "south africa":"Dél-Afrika",
-    "australia":"Ausztrália"
-  };
-
-  // 🌍 CONTINENT
-  if (statsMode === "continent") {
-
-    const counts = {};
-
-    allBanknotes.forEach(note => {
-      const c = normalizeToEnglish(note.country);
-      const cont = continentMap[c] || "Other";
-      counts[cont] = (counts[cont] || 0) + 1;
-    });
-
-    Object.entries(counts)
-      .sort((a,b)=>b[1]-a[1])
-      .forEach(([continent, count]) => {
-
-        const div = document.createElement("div");
-        div.className = "stat-row";
-
-        div.innerHTML = `<span>${iconMap[continent]}</span><span>${count} db</span>`;
-
-        div.onclick = () => {
-          activeContinent = continent;
-          activeCountry = null;
-          statsMode = "continent-drill";
-
-          banknotes = allBanknotes.filter(n =>
-            (continentMap[normalizeToEnglish(n.country)] || "Other") === continent
-          );
-
-          renderBanknotes();
-        };
-
-        statsDiv.appendChild(div);
-      });
-  }
-
-  // 🌎 DRILLDOWN
-  else if (statsMode === "continent-drill") {
-
-    const counts = {};
-
-    allBanknotes.forEach(note => {
-      const c = normalizeToEnglish(note.country);
-      const cont = continentMap[c] || "Other";
-      if (cont !== activeContinent) return;
-      counts[c] = (counts[c] || 0) + 1;
-    });
-
-    const back = document.createElement("div");
-    back.className = "stat-row";
-    back.innerHTML = "⬅️ Vissza";
-
-    back.onclick = () => {
-      statsMode = "continent";
-      activeContinent = null;
-      activeCountry = null;
-      banknotes = [...allBanknotes];
-      renderBanknotes();
-    };
-
-    statsDiv.appendChild(back);
-
-    Object.entries(counts)
-      .sort((a,b)=>b[1]-a[1])
-      .forEach(([country, count]) => {
-
-        const name = countryHu[country] || country;
-
-        const div = document.createElement("div");
-        div.className = "stat-row";
-
-        div.innerHTML = `
-          <span>
-            <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-            style="width:24px; margin-right:6px;">
-            ${name}
-          </span>
-          <span>${count} db</span>
-        `;
-
-        div.onclick = () => {
-          activeCountry = country;
-
-          banknotes = allBanknotes.filter(n =>
-            normalizeToEnglish(n.country) === country
-          );
-
-          renderBanknotes();
-        };
-
-        statsDiv.appendChild(div);
-      });
-  }
-}
-
-// TOTAL
-function updateTotal() {
-  if (!isAdmin) {
-    document.getElementById("totalValue").innerText = "Összérték: 🔒";
-    return;
-  }
-
-  let total = 0;
-  banknotes.forEach(n => total += Number(n.value) || 0);
-
-  document.getElementById("totalValue").innerText = "Összérték: " + total + " €";
-}
-
-// FILTER
-window.applyFilter = function () {
-  const country = normalizeCountry(document.getElementById("filterCountry").value);
-  const year = document.getElementById("filterYear").value;
-  const catalog = document.getElementById("filterCatalog").value.toLowerCase();
-
-  banknotes = allBanknotes.filter(note => {
-
-    const noteCountry = normalizeCountry(note.country);
-
-    return (
-      (!country || noteCountry.includes(country)) &&
-      (!year || note.year == year) &&
-      (!catalog || (note.catalog && note.catalog.toLowerCase().includes(catalog)))
-    );
-  });
-
-  renderBanknotes();
-};
-
-// RESET
-window.resetFilter = function () {
-
-  banknotes = [...allBanknotes];
-
-  statsMode = "continent";
-
-  activeCountry = null;
-
-  activeContinent = null; // 👈 EZ AZ ÚJ
-
-  activeLegend = null;
-
-  document.querySelectorAll(".legend div").forEach(el => {
-  el.classList.remove("active-legend");
- });
-
-  renderBanknotes();
-};
-
-window.filterByRange = function(range) {
-
-  activeLegend = range;
-
-  // 🔥 minden legend törlése
-  document.querySelectorAll(".legend div").forEach(el => {
-    el.classList.remove("active-legend");
-  });
-
-  // 🔥 aktuális kijelölés (piros highlight)
-  const selected = document.querySelector(`[onclick="filterByRange('${range}')"]`);
-  if (selected) selected.classList.add("active-legend");
-
-  const countryCount = {};
-
-  // 🔥 országonkénti darabszám
-  allBanknotes.forEach(note => {
-    if (!note.country) return;
-
-    const c = normalizeToEnglish(note.country);
-    countryCount[c] = (countryCount[c] || 0) + 1;
-  });
-
-  // 🔥 szűrés
-  banknotes = allBanknotes.filter(note => {
-
-    if (!note.country) return false;
-
-    const c = normalizeToEnglish(note.country);
-    const count = countryCount[c] || 0;
-
-    if (range === "0") return count === 0;
-    if (range === "1-5") return count >= 1 && count <= 5;
-    if (range === "6-20") return count >= 6 && count <= 20;
-    if (range === "20+") return count > 20;
-
-    return true;
-  });
-
-  renderBanknotes();
-};
-     
-// ADMIN
-window.adminLogin = function() {
-  const password = prompt("Jelszó:");
-
-  if (password === "1234") {
-    isAdmin = true;
-    localStorage.setItem("isAdmin", "true");
-    renderBanknotes();
-  }
-};
-
-window.logout = function() {
-  isAdmin = false;
-  localStorage.removeItem("isAdmin");
-  renderBanknotes();
-};
-
 // INIT
 await loadWorldMap();
 initMap();
 loadBanknotes();
 
 </script>
-
 
  </body>
 </html>
