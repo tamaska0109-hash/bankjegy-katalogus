@@ -138,6 +138,30 @@ h1 {
   margin-bottom: 20px;
   border-radius: 10px;
 }
+
+.legend {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+  width: fit-content;
+  margin: 10px auto;
+  text-align: left;
+  font-size: 14px;
+}
+
+.legend div {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.legend span {
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 3px;
+}
     
 </style>
 
@@ -157,6 +181,13 @@ h1 {
     <h2>🌍 Gyűjtemény térkép</h2>
 <div id="map" style="width: 100%; height: 400px;"></div>
 
+  <div class="legend">
+  <div><span style="background:#222"></span> 0 db</div>
+  <div><span style="background:#a8e6cf"></span> 1–5 db</div>
+  <div><span style="background:#56c596"></span> 6–20 db</div>
+  <div><span style="background:#2e8b57"></span> 20+ db</div>
+</div>
+    
    <div class="top-bar">
   <input id="filterCountry" placeholder="Ország">
   <input id="filterYear" placeholder="Év">
