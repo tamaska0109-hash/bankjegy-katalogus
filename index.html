@@ -314,6 +314,40 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+  // TOENGLISH   
+  function normalizeToEnglish(name) {
+
+  const map = {
+
+    // magyar → angol
+    "magyarorszag": "hungary",
+    "nemetorszag": "germany",
+    "ausztria": "austria",
+    "olaszorszag": "italy",
+    "spanyolorszag": "spain",
+    "franciaorszag": "france",
+    "hollandia": "netherlands",
+    "lengyelorszag": "poland",
+    "csehorszag": "czechia",
+    "szlovakia": "slovakia",
+    "romania": "romania",
+    "horvatorszag": "croatia",
+    "szerbia": "serbia",
+    "gorogorszag": "greece",
+    "torokorszag": "turkey",
+    "kina": "china",
+    "japan": "japan",
+
+    // USA variációk
+    "usa": "united states of america",
+    "egyesult allamok": "united states of america"
+  };
+
+  const n = normalizeCountry(name);
+
+  return map[n] || n;
+}   
+
  // FLAGCODE
  function getFlagCode(name) {
 
@@ -682,14 +716,14 @@ function updateMap() {
   const countryCount = {};
 
   banknotes.forEach(note => {
-    const c = normalizeCountry(note.country);
+    const c = normalizeToEnglish(note.country);
     countryCount[c] = (countryCount[c] || 0) + 1;
   });
 
   L.geoJSON(worldData, {
     style: function(feature) {
 
-      const name = normalizeCountry(feature.properties.name);
+      let c = normalizeToEnglish(note.country);
       const count = countryCount[name] || 0;
 
       let fillColor = "transparent";
@@ -722,7 +756,7 @@ function updateMap() {
 
       layer.on('click', function() {
 
-  const mapName = normalizeCountry(feature.properties.name);
+  const mapName = normalizeToEnglish(feature.properties.name);
 
   const countryMap = {
     "magyarorszag": "hungary",
