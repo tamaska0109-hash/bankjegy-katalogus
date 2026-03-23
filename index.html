@@ -524,7 +524,7 @@ function normalizeCountry(name) {
  function getCountryDisplay(name) {
   if (!name) return "";
 
-  const n = name.toLowerCase();
+  const n = name.toLowerCase().trim();
 
   const data = countryData[n];
 
@@ -533,10 +533,12 @@ function normalizeCountry(name) {
 
   let flag = "🏳️";
 
-  if (code) {
-    flag = String.fromCodePoint(
-      ...[...code].map(c => 127397 + c.charCodeAt())
-    );
+if (code) {
+  flag = String.fromCodePoint(
+    code.charCodeAt(0) + 127397,
+    code.charCodeAt(1) + 127397
+  );
+}
   }
 
   return {
