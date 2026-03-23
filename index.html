@@ -338,7 +338,7 @@ async function loadBanknotes() {
   });
 
   renderBanknotes();
-}
+}   
 
 // 🔍 Szűrés
 window.applyFilter = function () {
@@ -368,6 +368,18 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 
 loadBanknotes();
+
+function normalizeCountry(name) {
+  if (!name) return "";
+
+  return name
+    .toLowerCase()
+    .trim()
+    .replace("magyarország", "hungary")
+    .replace("ausztria", "austria")
+    .replace("németország", "germany")
+    .replace("usa", "united states of america");
+}
 
   function updateTotal() {
 
@@ -421,14 +433,14 @@ initMap();
   banknotes.forEach(note => {
     if (!note.country) return;
     
-    const mapped = countryMap[note.country] || note.country;
+    const mapped = normalizeCountry(note.country);
 countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   });
 
   // országok kirajzolása
   L.geoJSON(worldData, {
     style: function(feature) {
-  const name = feature.properties.name;
+  const name = feature.properties.name.toLowerCase();
   let count = countryCount[name] || 0;
 
   let fillColor = "#222"; // alap
