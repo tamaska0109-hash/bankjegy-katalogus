@@ -456,22 +456,47 @@ function normalizeCountry(name) {
 
   const n = name.toLowerCase();
 
+  // pár kivétel (fontos)
   const map = {
-    "hungary": { hu: "Magyarország", flag: "🇭🇺" },
-    "germany": { hu: "Németország", flag: "🇩🇪" },
-    "france": { hu: "Franciaország", flag: "🇫🇷" },
-    "italy": { hu: "Olaszország", flag: "🇮🇹" },
-    "spain": { hu: "Spanyolország", flag: "🇪🇸" },
-    "egypt": { hu: "Egyiptom", flag: "🇪🇬" },
-    "united states of america": { hu: "USA", flag: "🇺🇸" },
-    "united kingdom": { hu: "Egyesült Királyság", flag: "🇬🇧" },
-    "china": { hu: "Kína", flag: "🇨🇳" },
-    "japan": { hu: "Japán", flag: "🇯🇵" }
+    "hungary": "Magyarország",
+    "germany": "Németország",
+    "france": "Franciaország",
+    "italy": "Olaszország",
+    "spain": "Spanyolország",
+    "egypt": "Egyiptom",
+    "united states of america": "USA",
+    "united kingdom": "Egyesült Királyság"
   };
 
-  return map[n] || { hu: name, flag: "🏳️" };
+  const huName = map[n] || n.charAt(0).toUpperCase() + n.slice(1);
+
+  const flag = getFlagEmoji(n);
+
+  return {
+    hu: huName,
+    flag: flag
+  };
 }
-    
+  function getFlagEmoji(countryName) {
+  const codeMap = {
+    "hungary": "HU",
+    "germany": "DE",
+    "france": "FR",
+    "italy": "IT",
+    "spain": "ES",
+    "egypt": "EG",
+    "united states of america": "US",
+    "united kingdom": "GB"
+  };
+
+  const code = codeMap[countryName];
+
+  if (!code) return "🏳️";
+
+  return String.fromCodePoint(
+    ...[...code].map(c => 127397 + c.charCodeAt())
+  );
+}   
 
   function updateTotal() {
 
