@@ -566,16 +566,12 @@ window.estimateValue = function() {
 
   let base = 5;
 
-  // ország alapú szorzó
-  const c = normalizeCountry(country);
+const c = normalizeCountry(country);
 
-// alap
-let base = 5;
-
-// régiók
-if (country === "USA") base = 10;
-if (country === "Hungary") base = 6;
-if (country === "Germany") base = 8;
+// ország alapú szorzó (egyszerű, stabil)
+if (c === "united states of america") base = 10;
+else if (c === "hungary") base = 6;
+else if (c === "germany") base = 8;
 
   // év (régebbi = drágább)
   let ageFactor = 1;
