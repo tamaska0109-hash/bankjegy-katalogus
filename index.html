@@ -492,6 +492,32 @@ function updateTotal() {
   document.getElementById("totalValue").innerText = "Összérték: " + total + " €";
 }
 
+// FILTER
+window.applyFilter = function () {
+  const country = normalizeCountry(document.getElementById("filterCountry").value);
+  const year = document.getElementById("filterYear").value;
+  const catalog = document.getElementById("filterCatalog").value.toLowerCase();
+
+  banknotes = allBanknotes.filter(note => {
+
+    const noteCountry = normalizeCountry(note.country);
+
+    return (
+      (!country || noteCountry.includes(country)) &&
+      (!year || note.year == year) &&
+      (!catalog || (note.catalog && note.catalog.toLowerCase().includes(catalog)))
+    );
+  });
+
+  renderBanknotes();
+};
+
+// RESET
+window.resetFilter = function () {
+  banknotes = [...allBanknotes];
+  renderBanknotes();
+};
+     
 // ADMIN
 window.adminLogin = function() {
   const password = prompt("Jelszó:");
