@@ -359,14 +359,23 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   // országok kirajzolása
   L.geoJSON(worldData, {
     style: function(feature) {
-      const name = feature.properties.name;
+  const name = feature.properties.name;
+  let count = countryCount[name] || 0;
 
-       let count = countryCount[name] || 0;
+  let fillColor = "#222"; // alap
+
+  if (count > 0 && count <= 5) {
+    fillColor = "#a8e6cf";
+  } else if (count > 5 && count <= 20) {
+    fillColor = "#56c596";
+  } else if (count > 20) {
+    fillColor = "#2e8b57";
+  }
 
   return {
     color: "#555",
     weight: 1,
-    fillColor: count > 0 ? "gold" : "#222",
+    fillColor: fillColor,
     fillOpacity: count > 0 ? 0.7 : 0.2
   };
 },
