@@ -175,6 +175,7 @@ h1 {
   <body>
 
    <h1>💰 Tamás Bankjegy Gyűjteménye</h1>
+   <button onclick="adminLogin()">🔐 Admin belépés</button>
 
     <h2 id="totalValue">Összérték: 0 €</h2>
 
@@ -218,6 +219,8 @@ h1 {
   <div class="container"></div>
 
    <script type="module">
+
+     let isAdmin = false;
 
      let worldData = null;
 
@@ -462,6 +465,18 @@ layer.on('click', function() {
 }
   }).addTo(map);
 }
+
+window.adminLogin = function() {
+  const password = prompt("Add meg a jelszót:");
+
+  if (password === "1234") {
+    isAdmin = true;
+    alert("Admin mód aktiválva");
+    renderBanknotes();
+  } else {
+    alert("Hibás jelszó");
+  }
+};     
      
 </script>
 
