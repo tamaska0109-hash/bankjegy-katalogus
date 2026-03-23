@@ -822,156 +822,125 @@ function updateMap() {
 }
 // STATS
 function updateStats() {
+
   const statsDiv = document.getElementById("stats");
-  const counts = {};
+  statsDiv.innerHTML = "";
+
+  const iconMap = {
+    "Europe": "🌍",
+    "Asia": "🌏",
+    "America": "🌎",
+    "Africa": "🌍",
+    "Oceania": "🌏",
+    "Other": "❓"
+  };
 
   const continentMap = {
 
-  // EUROPE
-  "hungary":"Europe","magyarorszag":"Europe",
-  "germany":"Europe","nemetorszag":"Europe",
-  "austria":"Europe","ausztria":"Europe",
-  "france":"Europe","spain":"Europe","italy":"Europe","portugal":"Europe",
-  "netherlands":"Europe","hollandia":"Europe",
-  "belgium":"Europe","luxembourg":"Europe",
-  "poland":"Europe","lengyelorszag":"Europe",
-  "czechia":"Europe","csehorszag":"Europe",
-  "slovakia":"Europe","szlovakia":"Europe",
-  "romania":"Europe","bulgaria":"Europe",
-  "croatia":"Europe","horvatorszag":"Europe",
-  "serbia":"Europe","slovenia":"Europe",
-  "bosnia":"Europe","montenegro":"Europe",
-  "albania":"Europe","north macedonia":"Europe",
-  "greece":"Europe","gorogorszag":"Europe",
-  "turkey":"Europe","torokorszag":"Europe",
-  "ukraine":"Europe","belarus":"Europe",
-  "lithuania":"Europe","latvia":"Europe","estonia":"Europe",
-  "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
-  "ireland":"Europe","iceland":"Europe",
-  "united kingdom":"Europe","uk":"Europe",
-  "malta":"Europe","andorra":"Europe","monaco":"Europe",
-  "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
+    // EUROPE
+    "hungary":"Europe","magyarorszag":"Europe",
+    "germany":"Europe","nemetorszag":"Europe",
+    "austria":"Europe","ausztria":"Europe",
+    "france":"Europe","spain":"Europe","italy":"Europe","portugal":"Europe",
+    "netherlands":"Europe","hollandia":"Europe",
+    "belgium":"Europe","luxembourg":"Europe",
+    "poland":"Europe","lengyelorszag":"Europe",
+    "czechia":"Europe","csehorszag":"Europe",
+    "slovakia":"Europe","szlovakia":"Europe",
+    "romania":"Europe","bulgaria":"Europe",
+    "croatia":"Europe","horvatorszag":"Europe",
+    "serbia":"Europe","slovenia":"Europe",
+    "bosnia":"Europe","montenegro":"Europe",
+    "albania":"Europe","north macedonia":"Europe",
+    "greece":"Europe","gorogorszag":"Europe",
+    "turkey":"Europe","torokorszag":"Europe",
+    "ukraine":"Europe","belarus":"Europe",
+    "lithuania":"Europe","latvia":"Europe","estonia":"Europe",
+    "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
+    "ireland":"Europe","iceland":"Europe",
+    "united kingdom":"Europe","uk":"Europe",
+    "malta":"Europe","andorra":"Europe","monaco":"Europe",
+    "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
 
-  // ASIA
-  "china":"Asia","kina":"Asia",
-  "japan":"Asia","india":"Asia","pakistan":"Asia","bangladesh":"Asia",
-  "sri lanka":"Asia","nepal":"Asia","bhutan":"Asia",
-  "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
-  "philippines":"Asia","malaysia":"Asia","singapore":"Asia",
-  "laos":"Asia","cambodia":"Asia","myanmar":"Asia",
-  "south korea":"Asia","del korea":"Asia","north korea":"Asia",
-  "iran":"Asia","iraq":"Asia","syria":"Asia","lebanon":"Asia",
-  "jordan":"Asia","israel":"Asia","saudi arabia":"Asia",
-  "uae":"Asia","qatar":"Asia","kuwait":"Asia","oman":"Asia","yemen":"Asia",
-  "kazakhstan":"Asia","uzbekistan":"Asia","turkmenistan":"Asia",
-  "kyrgyzstan":"Asia","tajikistan":"Asia",
-  "armenia":"Asia","azerbaijan":"Asia","georgia":"Asia",
+    // ASIA
+    "china":"Asia","kina":"Asia",
+    "japan":"Asia","india":"Asia",
+    "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
 
-  // AMERICA
-  "usa":"America","united states":"America","united states of america":"America","egyesult allamok":"America",
-  "canada":"America","mexico":"America",
-  "guatemala":"America","belize":"America","honduras":"America",
-  "nicaragua":"America","costa rica":"America","panama":"America",
-  "cuba":"America","haiti":"America","dominican republic":"America",
-  "jamaica":"America","bahamas":"America",
-  "brazil":"America","brazilia":"America","argentina":"America",
-  "chile":"America","peru":"America","colombia":"America",
-  "venezuela":"America","ecuador":"America","bolivia":"America",
-  "paraguay":"America","uruguay":"America","guyana":"America","suriname":"America",
+    // AMERICA
+    "usa":"America","united states":"America","united states of america":"America",
+    "canada":"America","mexico":"America",
+    "brazil":"America","argentina":"America",
 
-  // AFRICA
-  "egypt":"Africa","egyiptom":"Africa",
-  "south africa":"Africa","del afrika":"Africa",
-  "nigeria":"Africa","kenya":"Africa","ethiopia":"Africa",
-  "morocco":"Africa","marokko":"Africa",
-  "tunisia":"Africa","algeria":"Africa",
-  "ghana":"Africa","uganda":"Africa","tanzania":"Africa",
-  "angola":"Africa","zambia":"Africa","zimbabwe":"Africa",
-  "botswana":"Africa","namibia":"Africa",
-  "mozambique":"Africa","madagascar":"Africa",
-  "senegal":"Africa","mali":"Africa","niger":"Africa","chad":"Africa",
-  "sudan":"Africa","south sudan":"Africa",
-  "somalia":"Africa","djibouti":"Africa",
-  "rwanda":"Africa","burundi":"Africa",
-  "cameroon":"Africa","gabon":"Africa","congo":"Africa",
-  "ivory coast":"Africa","liberia":"Africa",
-  "sierra leone":"Africa","guinea":"Africa",
-  "gambia":"Africa","mauritania":"Africa",
-  "lesotho":"Africa","eswatini":"Africa",
-  "seychelles":"Africa","comoros":"Africa","mauritius":"Africa",
+    // AFRICA
+    "egypt":"Africa","egyiptom":"Africa",
+    "south africa":"Africa",
+    "nigeria":"Africa",
 
-  // OCEANIA
-  "australia":"Oceania","new zealand":"Oceania",
-  "papua new guinea":"Oceania","fiji":"Oceania",
-  "solomon islands":"Oceania","vanuatu":"Oceania",
-  "samoa":"Oceania","tonga":"Oceania",
-  "kiribati":"Oceania","micronesia":"Oceania",
-  "palau":"Oceania","marshall islands":"Oceania",
-  "nauru":"Oceania","tuvalu":"Oceania"
-};
+    // OCEANIA
+    "australia":"Oceania","new zealand":"Oceania"
+  };
 
-  banknotes.forEach(note => {
-  const c = normalizeCountry(note.country);
-  const continent = continentMap[c] || "Other";
+  // 🔥 CONTINENT MODE
+  if (statsMode === "continent") {
 
-  counts[continent] = (counts[continent] || 0) + 1;
-});
+    const counts = {};
 
-  statsDiv.innerHTML = "";
+    banknotes.forEach(note => {
+      if (!note.country) return;
 
-if (statsMode === "continent") {
+      const c = normalizeToEnglish(note.country);
+      const continent = continentMap[c] || "Other";
 
-  // 🌍 kontinens nézet
-  Object.entries(counts)
-    .sort((a,b)=>b[1]-a[1])
-    .forEach(([continent, count]) => {
-
-      const div = document.createElement("div");
-      div.className = "stat-row";
-
-      div.innerHTML = `
-        <span>${iconMap[continent]} ${continent}</span>
-        <span>${count} db</span>
-      `;
-
-      statsDiv.appendChild(div);
+      counts[continent] = (counts[continent] || 0) + 1;
     });
 
-} else {
+    Object.entries(counts)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(([continent, count]) => {
 
-  // 🌎 ország nézet
-  const countryCounts = {};
+        const div = document.createElement("div");
+        div.className = "stat-row";
 
-  banknotes.forEach(note => {
-    if (!note.country) return;
+        div.innerHTML = `
+          <span>${iconMap[continent]} ${continent}</span>
+          <span>${count} db</span>
+        `;
 
-    const c = normalizeToEnglish(note.country);
-    countryCounts[c] = (countryCounts[c] || 0) + 1;
-  });
+        statsDiv.appendChild(div);
+      });
 
-  Object.entries(countryCounts)
-    .sort((a,b)=>b[1]-a[1])
-    .forEach(([country, count]) => {
+  } else {
 
-      const div = document.createElement("div");
-      div.className = "stat-row";
+    // 🔥 COUNTRY MODE
+    const countryCounts = {};
 
-      div.innerHTML = `
-        <span>
-          <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-          style="margin-right:6px; vertical-align:middle;">
-          ${country}
-        </span>
-        <span>${count} db</span>
-      `;
+    banknotes.forEach(note => {
+      if (!note.country) return;
 
-      statsDiv.appendChild(div);
+      const c = normalizeToEnglish(note.country);
+      countryCounts[c] = (countryCounts[c] || 0) + 1;
     });
 
-}
+    Object.entries(countryCounts)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(([country, count]) => {
 
-      
-    });
+        const div = document.createElement("div");
+        div.className = "stat-row";
+
+        div.innerHTML = `
+          <span>
+            <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
+            style="margin-right:6px; vertical-align:middle;">
+            ${country}
+          </span>
+          <span>${count} db</span>
+        `;
+
+        statsDiv.appendChild(div);
+      });
+  }
 }
 
 // TOTAL
