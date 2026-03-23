@@ -410,6 +410,25 @@ if (localStorage.getItem("isAdmin") === "true") {
 
 loadBanknotes();
 
+const countryData = {
+  "hungary": { hu: "Magyarország", code: "HU" },
+  "germany": { hu: "Németország", code: "DE" },
+  "france": { hu: "Franciaország", code: "FR" },
+  "italy": { hu: "Olaszország", code: "IT" },
+  "spain": { hu: "Spanyolország", code: "ES" },
+  "egypt": { hu: "Egyiptom", code: "EG" },
+  "japan": { hu: "Japán", code: "JP" },
+  "china": { hu: "Kína", code: "CN" },
+  "brazil": { hu: "Brazília", code: "BR" },
+  "argentina": { hu: "Argentína", code: "AR" },
+  "chile": { hu: "Chile", code: "CL" },
+  "india": { hu: "India", code: "IN" },
+  "australia": { hu: "Ausztrália", code: "AU" },
+  "canada": { hu: "Kanada", code: "CA" },
+  "united states of america": { hu: "USA", code: "US" },
+  "united kingdom": { hu: "Egyesült Királyság", code: "GB" }
+};
+     
 function normalizeCountry(name) {
   if (!name) return "";
 
@@ -456,21 +475,18 @@ function normalizeCountry(name) {
 
   const n = name.toLowerCase();
 
-  // pár kivétel (fontos)
-  const map = {
-    "hungary": "Magyarország",
-    "germany": "Németország",
-    "france": "Franciaország",
-    "italy": "Olaszország",
-    "spain": "Spanyolország",
-    "egypt": "Egyiptom",
-    "united states of america": "USA",
-    "united kingdom": "Egyesült Királyság"
-  };
+  const data = countryData[n];
 
-  const huName = map[n] || n.charAt(0).toUpperCase() + n.slice(1);
+  const huName = data?.hu || n.charAt(0).toUpperCase() + n.slice(1);
+  const code = data?.code;
 
-  const flag = getFlagEmoji(n);
+  let flag = "🏳️";
+
+  if (code) {
+    flag = String.fromCodePoint(
+      ...[...code].map(c => 127397 + c.charCodeAt())
+    );
+  }
 
   return {
     hu: huName,
