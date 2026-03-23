@@ -214,6 +214,16 @@ h1 {
   color: black;
   font-weight: bold;
 }
+
+ @keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.stat-row.clicked {
+  animation: pulse 0.3s ease;
+}   
     
 </style>
 
@@ -883,6 +893,12 @@ function updateStats() {
       
      div.onclick = () => {
 
+  div.classList.add("clicked");
+
+  setTimeout(() => {
+  div.classList.remove("clicked");
+  }, 300);     
+
   // 🔥 minden aktív törlése
   document.querySelectorAll(".stat-row").forEach(el => {
     el.classList.remove("active-continent");
@@ -941,7 +957,11 @@ window.applyFilter = function () {
 
 // RESET
 window.resetFilter = function () {
+
   banknotes = [...allBanknotes];
+
+  activeContinent = null; // 👈 EZ AZ ÚJ
+
   renderBanknotes();
 };
      
