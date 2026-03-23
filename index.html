@@ -842,53 +842,9 @@ function updateStats() {
     "Other": "❓"
   };
 
-  const continentMap = {
+  const continentMap = window.continentMap || {};
 
-    // EUROPE
-    "hungary":"Europe","magyarorszag":"Europe",
-    "germany":"Europe","nemetorszag":"Europe",
-    "austria":"Europe","ausztria":"Europe",
-    "france":"Europe","spain":"Europe","italy":"Europe","portugal":"Europe",
-    "netherlands":"Europe","hollandia":"Europe",
-    "belgium":"Europe","luxembourg":"Europe",
-    "poland":"Europe","lengyelorszag":"Europe",
-    "czechia":"Europe","csehorszag":"Europe",
-    "slovakia":"Europe","szlovakia":"Europe",
-    "romania":"Europe","bulgaria":"Europe",
-    "croatia":"Europe","horvatorszag":"Europe",
-    "serbia":"Europe","slovenia":"Europe",
-    "bosnia":"Europe","montenegro":"Europe",
-    "albania":"Europe","north macedonia":"Europe",
-    "greece":"Europe","gorogorszag":"Europe",
-    "turkey":"Europe","torokorszag":"Europe",
-    "ukraine":"Europe","belarus":"Europe",
-    "lithuania":"Europe","latvia":"Europe","estonia":"Europe",
-    "norway":"Europe","sweden":"Europe","finland":"Europe","denmark":"Europe",
-    "ireland":"Europe","iceland":"Europe",
-    "united kingdom":"Europe","uk":"Europe",
-    "malta":"Europe","andorra":"Europe","monaco":"Europe",
-    "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
-
-    // ASIA
-    "china":"Asia","kina":"Asia",
-    "japan":"Asia","india":"Asia",
-    "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
-
-    // AMERICA
-    "usa":"America","united states":"America","united states of america":"America",
-    "canada":"America","mexico":"America",
-    "brazil":"America","argentina":"America",
-
-    // AFRICA
-    "egypt":"Africa","egyiptom":"Africa",
-    "south africa":"Africa",
-    "nigeria":"Africa",
-
-    // OCEANIA
-    "australia":"Oceania","new zealand":"Oceania"
-  };
-
-  // 🔥 CONTINENT MODE
+  // 🌍 CONTINENT MODE
   if (statsMode === "continent") {
 
     const counts = {};
@@ -897,9 +853,9 @@ function updateStats() {
       if (!note.country) return;
 
       const c = normalizeToEnglish(note.country);
-      const continent = continentMap[c] || "Other";
+      const cont = continentMap[c] || "Other";
 
-      counts[continent] = (counts[continent] || 0) + 1;
+      counts[cont] = (counts[cont] || 0) + 1;
     });
 
     Object.entries(counts)
@@ -909,12 +865,6 @@ function updateStats() {
         const div = document.createElement("div");
         div.className = "stat-row";
 
-        div.onclick = () => {
-         activeContinent = continent;
-         statsMode = "continent-drill";
-    renderBanknotes();
-};
-
         div.innerHTML = `
           <span>${iconMap[continent]} ${continent}</span>
           <span>${count} db</span>
@@ -923,42 +873,37 @@ function updateStats() {
         statsDiv.appendChild(div);
       });
 
-  } else if (statsMode === "country") {
+  } else {
 
-    else if (statsMode === "continent-drill") {
+    // 🌎 COUNTRY MODE
+    const countryCounts = {};
 
-  const countryCounts = {};
+    banknotes.forEach(note => {
+      if (!note.country) return;
 
-  banknotes.forEach(note => {
-    if (!note.country) return;
-
-    const c = normalizeToEnglish(note.country);
-
-    // 🔥 csak az adott kontinens
-    const cont = continentMap[c] || "Other";
-    if (cont !== activeContinent) return;
-
-    countryCounts[c] = (countryCounts[c] || 0) + 1;
-  });
-
-  Object.entries(countryCounts)
-    .sort((a,b)=>b[1]-a[1])
-    .forEach(([country, count]) => {
-
-      const div = document.createElement("div");
-      div.className = "stat-row";
-
-      div.innerHTML = `
-        <span>
-          <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-          style="width:24px; height:18px; object-fit:cover; border-radius:2px; margin-right:6px; vertical-align:middle;">
-          ${country}
-        </span>
-        <span>${count} db</span>
-      `;
-
-      statsDiv.appendChild(div);
+      const c = normalizeToEnglish(note.country);
+      countryCounts[c] = (countryCounts[c] || 0) + 1;
     });
+
+    Object.entries(countryCounts)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(([country, count]) => {
+
+        const div = document.createElement("div");
+        div.className = "stat-row";
+
+        div.innerHTML = `
+          <span>
+            <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
+            style="width:24px; height:18px; object-fit:cover; border-radius:2px; margin-right:6px; vertical-align:middle;">
+            ${country}
+          </span>
+          <span>${count} db</span>
+        `;
+
+        statsDiv.appendChild(div);
+      });
+  }
 }
 
     // 🔥 COUNTRY MODE
