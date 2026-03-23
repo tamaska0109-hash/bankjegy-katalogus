@@ -495,7 +495,12 @@ let map;
   banknotes.forEach(note => {
     if (!note.country) return;
 
-    const c = normalizeCountry(note.country);
+    const c = note.country
+  .toLowerCase()
+  .trim()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "");
+    
     counts[c] = (counts[c] || 0) + 1;
   });
 
@@ -588,11 +593,12 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
       
   const name = feature.properties.name
   .toLowerCase()
+  .trim()  
   .normalize("NFD")
   .replace(/[\u0300-\u036f]/g, "");
   let count = countryCount[name] || 0;
 
-  let fillColor = "#transparent"; // alap
+  let fillColor = "transparent"; // alap
 
   if (count > 0 && count <= 5) {
   fillColor = "#fff3bf"; // világos arany
@@ -632,7 +638,7 @@ layer.on({
     const layer = e.target;
     layer.setStyle({
       weight: 1,
-      color: "#555"
+      color: "#cc3333"
     });
   }
 });
