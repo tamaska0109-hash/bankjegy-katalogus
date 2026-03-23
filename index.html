@@ -162,6 +162,21 @@ h1 {
   margin-right: 10px;
   border-radius: 3px;
 }
+
+#stats {
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  background: #1a1a1a;
+  padding: 5px 10px;
+  border-radius: 5px;
+}    
     
 </style>
 
@@ -184,6 +199,8 @@ h1 {
 
     <h2>🌍 Gyűjtemény térkép</h2>
 <div id="map" style="width: 100%; height: 400px;"></div>
+    <h2>📊 Statisztika</h2>
+<div id="stats"></div>
 
   <div class="legend">
   <div><span style="background:#222"></span> 0 db</div>
@@ -279,6 +296,7 @@ function renderBanknotes() {
   });
   updateTotal();
   updateMap();
+  updateStats();
 
   document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
 }
@@ -427,6 +445,34 @@ function normalizeCountry(name) {
     "Összérték: " + total + " €";
 }
 let map;
+
+  function updateStats() {
+  const statsDiv = document.getElementById("stats");
+  if (!statsDiv) return;
+
+  const counts = {};
+
+  banknotes.forEach(note => {
+    if (!note.country) return;
+
+    const c = normalizeCountry(note.country);
+    counts[c] = (counts[c] || 0) + 1;
+  });
+
+  // rendezés
+  const sorted = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10); // TOP 10
+
+  statsDiv.innerHTML = "";
+
+  sorted.forEach(([country, count]) => {
+    const div = document.createElement("div");
+    div.className = "stat-row";
+    div.innerHTML = `<span>${country}</span><span>${count} db</span>`;
+    statsDiv.appendChild(div);
+  });
+}
 
 function initMap() {
   map = L.map('map').setView([20, 0], 2);
