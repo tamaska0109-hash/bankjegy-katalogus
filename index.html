@@ -359,6 +359,10 @@ window.resetFilter = function () {
   renderBanknotes();
 };
 
+if (localStorage.getItem("isAdmin") === "true") {
+  isAdmin = true;
+}
+
 loadBanknotes();
 
   function updateTotal() {
