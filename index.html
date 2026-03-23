@@ -709,28 +709,34 @@ async function loadBanknotes() {
 function updateMap() {
   if (!map || !worldData) return;
 
+  // régi layer-ek törlése
   map.eachLayer(layer => {
     if (layer.feature) map.removeLayer(layer);
   });
 
   const countryCount = {};
 
+  // 🔥 adat feldolgozás (KÖZPONTI NORMALIZÁLÁS)
   banknotes.forEach(note => {
+    if (!note.country) return;
+
     const c = normalizeToEnglish(note.country);
     countryCount[c] = (countryCount[c] || 0) + 1;
   });
 
   L.geoJSON(worldData, {
+
+    // 🔥 SZÍNEZÉS
     style: function(feature) {
 
-      let c = normalizeToEnglish(note.country);
+      const name = normalizeToEnglish(feature.properties.name);
       const count = countryCount[name] || 0;
 
       let fillColor = "transparent";
 
-      if (count > 0 && count <= 5) fillColor = "#fff3b0";     // világos sárga
-      else if (count > 5 && count <= 20) fillColor = "#ffa94d"; // narancs
-      else if (count > 20) fillColor = "#ff8c00";              // erős narancs/arany
+      if (count > 0 && count <= 5) fillColor = "#fff3b0";
+      else if (count > 5 && count <= 20) fillColor = "#ffa94d";
+      else if (count > 20) fillColor = "#ff8c00";
 
       return {
         color: "#cc3333",
@@ -740,9 +746,10 @@ function updateMap() {
       };
     },
 
+    // 🔥 INTERAKCIÓ
     onEachFeature: function(feature, layer) {
 
-      const name = normalizeCountry(feature.properties.name);
+      const name = normalizeToEnglish(feature.properties.name);
       const count = countryCount[name] || 0;
 
       if (count > 0) {
@@ -754,49 +761,24 @@ function updateMap() {
         mouseout: e => e.target.setStyle({ weight: 1, color: "#cc3333" })
       });
 
+      // 🔥 KATTINTÁS
       layer.on('click', function() {
 
-  const mapName = normalizeToEnglish(feature.properties.name);
+        const mapName = normalizeToEnglish(feature.properties.name);
 
-  const countryMap = {
-    "magyarorszag": "hungary",
-    "nemetorszag": "germany",
-    "ausztria": "austria",
-    "olaszorszag": "italy",
-    "spanyolorszag": "spain",
-    "franciaorszag": "france",
-    "hollandia": "netherlands",
-    "lengyelorszag": "poland",
-    "csehorszag": "czechia",
-    "szlovakia": "slovakia",
-    "romania": "romania",
-    "horvatorszag": "croatia",
-    "szerbia": "serbia",
-    "kina": "china",
-    "japan": "japan",
-    "usa": "united states of america",
-    "egyesult allamok": "united states of america",
-    "egyiptom": "egypt",
-    "torokorszag": "turkey",
-    "gorogorszag": "greece"
-  };
+        banknotes = allBanknotes.filter(note => {
+          if (!note.country) return false;
 
-  banknotes = allBanknotes.filter(note => {
-    if (!note.country) return false;
+          const c = normalizeToEnglish(note.country);
+          return c === mapName;
+        });
 
-    let noteCountry = normalizeCountry(note.country);
-
-    noteCountry = countryMap[noteCountry] || noteCountry;
-
-    return noteCountry === mapName;
-  });
-
-  renderBanknotes();
-});
+        renderBanknotes();
+      });
     }
+
   }).addTo(map);
 }
-
 // STATS
 function updateStats() {
   const statsDiv = document.getElementById("stats");
