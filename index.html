@@ -793,6 +793,8 @@ function updateMap() {
       // 🔥 KATTINTÁS
       layer.on('click', function() {
 
+        statsMode = "country";
+
         const mapName = normalizeToEnglish(feature.properties.name);
 
         banknotes = allBanknotes.filter(note => {
