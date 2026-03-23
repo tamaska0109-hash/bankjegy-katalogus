@@ -288,6 +288,8 @@ let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
+     
+let activeContinent = null;     
 
 // ADMIN STATE
 if (localStorage.getItem("isAdmin") === "true") {
@@ -868,6 +870,10 @@ function updateStats() {
       div.className = "stat-row";
       div.dataset.continent = continent;
 
+      if (continent === activeContinent) {
+       div.classList.add("active-continent");
+  }
+
     div.innerHTML = `
   <span>
     ${iconMap[continent]} ${continent}
@@ -884,6 +890,7 @@ function updateStats() {
 
   // 🔥 aktuális kijelölése
   div.classList.add("active-continent");
+  activeContinent = continent;     
 
   // 🔥 szűrés
   banknotes = allBanknotes.filter(note => {
