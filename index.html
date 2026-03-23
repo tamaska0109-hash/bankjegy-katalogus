@@ -138,16 +138,19 @@ h1 {
   margin-bottom: 20px;
   border-radius: 10px;
   height: 600px;
+  position: relative; /* 🔥 EZ FONTOS */
 }
 
+
 .legend {
-  background: #1a1a1a;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.8);
   padding: 10px;
   border-radius: 10px;
-  width: fit-content;
-  margin: 10px auto;
-  text-align: left;
   font-size: 14px;
+  z-index: 1000;
 }
 
 .legend div {
@@ -199,14 +202,14 @@ h1 {
     <h2 id="totalValue">Összérték: 0 €</h2>
 
     <h2>🌍 Gyűjtemény térkép</h2>
-<div id="map"></div>
+<div id="map">
 
-    <div class="legend">
-  <div><span style="background:#222"></span> 0 db</div>
-  <div><span style="background:#a8e6cf"></span> 1–5 db</div>
-  <div><span style="background:#56c596"></span> 6–20 db</div>
-  <div><span style="background:#2e8b57"></span> 20+ db</div>
-</div>
+  <div class="legend">
+    <div><span style="background:#222"></span> 0 db</div>
+    <div><span style="background:#a8e6cf"></span> 1–5 db</div>
+    <div><span style="background:#56c596"></span> 6–20 db</div>
+    <div><span style="background:#2e8b57"></span> 20+ db</div>
+  </div>
     
     <h2>📊 Statisztika</h2>
 <div id="stats"></div>
