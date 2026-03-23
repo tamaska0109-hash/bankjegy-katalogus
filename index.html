@@ -378,6 +378,23 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   if (count > 0) {
     layer.bindPopup(`${name}: ${count} db`);
   }
+
+layer.on({
+  mouseover: function(e) {
+    const layer = e.target;
+    layer.setStyle({
+      weight: 3,
+      color: "#fff"
+    });
+  },
+  mouseout: function(e) {
+    const layer = e.target;
+    layer.setStyle({
+      weight: 1,
+      color: "#555"
+    });
+  }
+});
 }
   }).addTo(map);
 }
