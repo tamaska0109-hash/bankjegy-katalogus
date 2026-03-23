@@ -285,6 +285,46 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+ // FLAGCODE
+ function getFlagCode(name) {
+
+  const n = normalizeCountry(name);
+
+  // leggyakoribb országok (gyors egyezés)
+  const map = {
+    "hungary": "hu",
+    "magyarorszag": "hu",
+    "germany": "de",
+    "nemetorszag": "de",
+    "austria": "at",
+    "ausztria": "at",
+    "japan": "jp",
+    "china": "cn",
+    "france": "fr",
+    "spain": "es",
+    "italy": "it",
+    "poland": "pl",
+    "czechia": "cz",
+    "slovakia": "sk",
+    "romania": "ro",
+    "croatia": "hr",
+    "serbia": "rs",
+    "usa": "us",
+    "united states of america": "us",
+    "egyesult allamok": "us",
+    "canada": "ca",
+    "mexico": "mx",
+    "brazil": "br",
+    "argentina": "ar",
+    "australia": "au",
+    "egypt": "eg",
+    "turkey": "tr",
+    "greece": "gr"
+  };
+
+  return map[n] || "";
+}    
+
  // COUNTRYCODE    
  function getCountryCode(name) {
   const map = {
@@ -362,7 +402,7 @@ function renderBanknotes() {
       <h3>${note.name || ""}</h3>
       <p>
        <img 
-        src="https://flagcdn.com/24x18/${getCountryCode(note.country)}.png"
+        src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
         style="width:20px; height:auto; vertical-align:middle; margin-right:6px; border-radius:2px;"
        ${note.country || ""} • ${note.year || ""}
       </p>
