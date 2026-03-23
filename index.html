@@ -827,17 +827,18 @@ function updateStats() {
   statsDiv.innerHTML = "";
 
   const iconMap = {
-    "Europe": "🌍",
-    "Asia": "🌏",
-    "America": "🌎",
-    "Africa": "🌍",
-    "Oceania": "🌏",
-    "Other": "❓"
+    "Europe": "🌍 Európa",
+    "Asia": "🌏 Ázsia",
+    "America": "🌎 Amerika",
+    "Africa": "🌍 Afrika",
+    "Oceania": "🌏 Óceánia",
+    "Other": "❓ Egyéb"
   };
 
+  // 🌍 teljes continent map
   const continentMap = {
 
-    // 🌍 EUROPE
+    // EUROPE
     "hungary":"Europe","magyarorszag":"Europe",
     "germany":"Europe","nemetorszag":"Europe",
     "austria":"Europe","ausztria":"Europe",
@@ -863,7 +864,7 @@ function updateStats() {
     "san marino":"Europe","liechtenstein":"Europe","vatican":"Europe",
     "switzerland":"Europe",
 
-    // 🌏 ASIA
+    // ASIA
     "china":"Asia","kina":"Asia",
     "japan":"Asia","india":"Asia","pakistan":"Asia","bangladesh":"Asia",
     "sri lanka":"Asia","nepal":"Asia","bhutan":"Asia",
@@ -878,7 +879,7 @@ function updateStats() {
     "kyrgyzstan":"Asia","tajikistan":"Asia",
     "armenia":"Asia","azerbaijan":"Asia","georgia":"Asia",
 
-    // 🌎 AMERICA
+    // AMERICA
     "usa":"America","united states":"America","united states of america":"America","egyesult allamok":"America",
     "canada":"America","mexico":"America",
     "guatemala":"America","belize":"America","honduras":"America",
@@ -890,7 +891,7 @@ function updateStats() {
     "venezuela":"America","ecuador":"America","bolivia":"America",
     "paraguay":"America","uruguay":"America","guyana":"America","suriname":"America",
 
-    // 🌍 AFRICA
+    // AFRICA
     "egypt":"Africa","egyiptom":"Africa",
     "south africa":"Africa","nigeria":"Africa","kenya":"Africa","ethiopia":"Africa",
     "morocco":"Africa","marokko":"Africa",
@@ -910,7 +911,7 @@ function updateStats() {
     "lesotho":"Africa","eswatini":"Africa",
     "seychelles":"Africa","comoros":"Africa","mauritius":"Africa",
 
-    // 🌏 OCEANIA
+    // OCEANIA
     "australia":"Oceania","new zealand":"Oceania",
     "papua new guinea":"Oceania","fiji":"Oceania",
     "solomon islands":"Oceania","vanuatu":"Oceania",
@@ -918,6 +919,37 @@ function updateStats() {
     "kiribati":"Oceania","micronesia":"Oceania",
     "palau":"Oceania","marshall islands":"Oceania",
     "nauru":"Oceania","tuvalu":"Oceania"
+  };
+
+  // 🇭🇺 ország nevek magyarul
+  const countryHu = {
+    "hungary":"Magyarország",
+    "germany":"Németország",
+    "austria":"Ausztria",
+    "france":"Franciaország",
+    "spain":"Spanyolország",
+    "italy":"Olaszország",
+    "netherlands":"Hollandia",
+    "poland":"Lengyelország",
+    "czechia":"Csehország",
+    "slovakia":"Szlovákia",
+    "romania":"Románia",
+    "croatia":"Horvátország",
+    "serbia":"Szerbia",
+    "greece":"Görögország",
+    "turkey":"Törökország",
+    "china":"Kína",
+    "japan":"Japán",
+    "india":"India",
+    "usa":"USA",
+    "united states of america":"USA",
+    "canada":"Kanada",
+    "mexico":"Mexikó",
+    "brazil":"Brazília",
+    "argentina":"Argentína",
+    "egypt":"Egyiptom",
+    "south africa":"Dél-Afrika",
+    "australia":"Ausztrália"
   };
 
   // 🌍 CONTINENT MODE
@@ -942,11 +974,10 @@ function updateStats() {
         div.className = "stat-row";
 
         div.innerHTML = `
-          <span>${iconMap[continent]} ${continent}</span>
+          <span>${iconMap[continent]}</span>
           <span>${count} db</span>
         `;
 
-        // 🔥 DRILLDOWN
         div.onclick = () => {
           activeContinent = continent;
           statsMode = "continent-drill";
@@ -957,7 +988,7 @@ function updateStats() {
       });
   }
 
-  // 🌎 DRILLDOWN (kontinens → országok)
+  // 🌎 DRILLDOWN
   else if (statsMode === "continent-drill") {
 
     const countryCounts = {};
@@ -973,10 +1004,9 @@ function updateStats() {
       countryCounts[c] = (countryCounts[c] || 0) + 1;
     });
 
-    // 🔙 vissza gomb
     const back = document.createElement("div");
     back.className = "stat-row";
-    back.innerHTML = "⬅️ Vissza kontinensekhez";
+    back.innerHTML = "⬅️ Vissza";
 
     back.onclick = () => {
       statsMode = "continent";
@@ -990,14 +1020,16 @@ function updateStats() {
       .sort((a,b)=>b[1]-a[1])
       .forEach(([country, count]) => {
 
+        const name = countryHu[country] || country;
+
         const div = document.createElement("div");
         div.className = "stat-row";
 
         div.innerHTML = `
           <span>
             <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-            style="width:24px; height:18px; object-fit:cover; border-radius:2px; margin-right:6px; vertical-align:middle;">
-            ${country}
+            style="width:24px; height:18px; margin-right:6px;">
+            ${name}
           </span>
           <span>${count} db</span>
         `;
@@ -1005,10 +1037,9 @@ function updateStats() {
         div.onclick = () => {
           activeCountry = country;
 
-          banknotes = allBanknotes.filter(note => {
-            const c = normalizeToEnglish(note.country);
-            return c === country;
-          });
+          banknotes = allBanknotes.filter(note =>
+            normalizeToEnglish(note.country) === country
+          );
 
           renderBanknotes();
         };
@@ -1017,7 +1048,7 @@ function updateStats() {
       });
   }
 
-  // 🌎 COUNTRY MODE (térképről)
+  // 🌎 COUNTRY MODE
   else {
 
     const countryCounts = {};
@@ -1033,6 +1064,8 @@ function updateStats() {
       .sort((a,b)=>b[1]-a[1])
       .forEach(([country, count]) => {
 
+        const name = countryHu[country] || country;
+
         const div = document.createElement("div");
         div.className = "stat-row";
 
@@ -1043,8 +1076,8 @@ function updateStats() {
         div.innerHTML = `
           <span>
             <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-            style="width:24px; height:18px; object-fit:cover; border-radius:2px; margin-right:6px; vertical-align:middle;">
-            ${country}
+            style="width:24px; height:18px; margin-right:6px;">
+            ${name}
           </span>
           <span>${count} db</span>
         `;
@@ -1057,10 +1090,9 @@ function updateStats() {
           } else {
             activeCountry = country;
 
-            banknotes = allBanknotes.filter(note => {
-              const c = normalizeToEnglish(note.country);
-              return c === country;
-            });
+            banknotes = allBanknotes.filter(note =>
+              normalizeToEnglish(note.country) === country
+            );
           }
 
           renderBanknotes();
