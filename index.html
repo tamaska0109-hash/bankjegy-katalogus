@@ -483,11 +483,7 @@ div.onclick = function() {
 
   renderBanknotes();
 
-};
-    statsDiv.appendChild(div);
-  });
-
-map.eachLayer(layer => {
+  map.eachLayer(layer => {
   if (layer.feature) {
     const name = layer.feature.properties.name.toLowerCase();
     if (name === country) {
@@ -500,7 +496,10 @@ map.eachLayer(layer => {
     }
   }
 });
-    
+
+};
+    statsDiv.appendChild(div);
+  });
 }
 
 function initMap() {
