@@ -522,30 +522,27 @@ function normalizeCountry(name) {
 }
 
  function getCountryDisplay(name) {
-  if (!name) return "";
+  if (!name) return { hu: "", flag: "🏳️" };
 
   const n = name.toLowerCase().trim();
 
   const data = countryData[n];
 
-  const huName = data?.hu || n.charAt(0).toUpperCase() + n.slice(1);
+  const huName = data?.hu || n;
   const code = data?.code;
 
   let flag = "🏳️";
 
-if (code) {
-  flag = String.fromCodePoint(
-    code.charCodeAt(0) + 127397,
-    code.charCodeAt(1) + 127397
-  );
-}
+  if (code && code.length === 2) {
+    flag = String.fromCodePoint(
+      code.charCodeAt(0) + 127397,
+      code.charCodeAt(1) + 127397
+    );
   }
 
-  return {
-    hu: huName,
-    flag: flag
-  };
+  return { hu: huName, flag: flag };
 }
+     
   function getFlagEmoji(countryName) {
   if (!countryName) return "🏳️";
 
