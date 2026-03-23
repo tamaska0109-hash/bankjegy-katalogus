@@ -395,6 +395,19 @@ layer.on({
     });
   }
 });
+
+layer.on('click', function() {
+  const name = feature.properties.name;
+
+  banknotes = allBanknotes.filter(note => {
+    if (!note.country) return false;
+
+    const mapped = countryMap[note.country] || note.country;
+    return mapped === name;
+  });
+
+  renderBanknotes();
+});
 }
   }).addTo(map);
 }
