@@ -826,6 +826,7 @@ function updateStats() {
   const statsDiv = document.getElementById("stats");
   statsDiv.innerHTML = "";
 
+  // 🌍 Kontinensek magyarul + ikon
   const iconMap = {
     "Europe": "🌍 Európa",
     "Asia": "🌏 Ázsia",
@@ -835,7 +836,7 @@ function updateStats() {
     "Other": "❓ Egyéb"
   };
 
-  // 🌍 teljes continent map
+  // 🌍 TELJES continent map
   const continentMap = {
 
     // EUROPE
@@ -867,61 +868,29 @@ function updateStats() {
     // ASIA
     "china":"Asia","kina":"Asia",
     "japan":"Asia","india":"Asia","pakistan":"Asia","bangladesh":"Asia",
-    "sri lanka":"Asia","nepal":"Asia","bhutan":"Asia",
     "indonesia":"Asia","thailand":"Asia","vietnam":"Asia",
     "philippines":"Asia","malaysia":"Asia","singapore":"Asia",
-    "laos":"Asia","cambodia":"Asia","myanmar":"Asia",
     "south korea":"Asia","north korea":"Asia",
-    "iran":"Asia","iraq":"Asia","syria":"Asia","lebanon":"Asia",
-    "jordan":"Asia","israel":"Asia","saudi arabia":"Asia",
-    "uae":"Asia","qatar":"Asia","kuwait":"Asia","oman":"Asia","yemen":"Asia",
-    "kazakhstan":"Asia","uzbekistan":"Asia","turkmenistan":"Asia",
-    "kyrgyzstan":"Asia","tajikistan":"Asia",
-    "armenia":"Asia","azerbaijan":"Asia","georgia":"Asia",
+    "iran":"Asia","iraq":"Asia","israel":"Asia",
+    "saudi arabia":"Asia","uae":"Asia",
 
     // AMERICA
     "usa":"America","united states":"America","united states of america":"America","egyesult allamok":"America",
     "canada":"America","mexico":"America",
-    "guatemala":"America","belize":"America","honduras":"America",
-    "nicaragua":"America","costa rica":"America","panama":"America",
-    "cuba":"America","haiti":"America","dominican republic":"America",
-    "jamaica":"America","bahamas":"America",
     "brazil":"America","brazilia":"America","argentina":"America",
     "chile":"America","peru":"America","colombia":"America",
-    "venezuela":"America","ecuador":"America","bolivia":"America",
-    "paraguay":"America","uruguay":"America","guyana":"America","suriname":"America",
 
     // AFRICA
     "egypt":"Africa","egyiptom":"Africa",
-    "south africa":"Africa","nigeria":"Africa","kenya":"Africa","ethiopia":"Africa",
+    "south africa":"Africa","nigeria":"Africa","kenya":"Africa",
     "morocco":"Africa","marokko":"Africa",
     "tunisia":"Africa","algeria":"Africa",
-    "ghana":"Africa","uganda":"Africa","tanzania":"Africa",
-    "angola":"Africa","zambia":"Africa","zimbabwe":"Africa",
-    "botswana":"Africa","namibia":"Africa",
-    "mozambique":"Africa","madagascar":"Africa",
-    "senegal":"Africa","mali":"Africa","niger":"Africa","chad":"Africa",
-    "sudan":"Africa","south sudan":"Africa",
-    "somalia":"Africa","djibouti":"Africa",
-    "rwanda":"Africa","burundi":"Africa",
-    "cameroon":"Africa","gabon":"Africa","congo":"Africa",
-    "ivory coast":"Africa","liberia":"Africa",
-    "sierra leone":"Africa","guinea":"Africa",
-    "gambia":"Africa","mauritania":"Africa",
-    "lesotho":"Africa","eswatini":"Africa",
-    "seychelles":"Africa","comoros":"Africa","mauritius":"Africa",
 
     // OCEANIA
-    "australia":"Oceania","new zealand":"Oceania",
-    "papua new guinea":"Oceania","fiji":"Oceania",
-    "solomon islands":"Oceania","vanuatu":"Oceania",
-    "samoa":"Oceania","tonga":"Oceania",
-    "kiribati":"Oceania","micronesia":"Oceania",
-    "palau":"Oceania","marshall islands":"Oceania",
-    "nauru":"Oceania","tuvalu":"Oceania"
+    "australia":"Oceania","new zealand":"Oceania"
   };
 
-  // 🇭🇺 ország nevek magyarul
+  // 🇭🇺 Országnevek magyarul
   const countryHu = {
     "hungary":"Magyarország",
     "germany":"Németország",
@@ -952,7 +921,7 @@ function updateStats() {
     "australia":"Ausztrália"
   };
 
-  // 🌍 CONTINENT MODE
+  // 🌍 1. CONTINENT NÉZET
   if (statsMode === "continent") {
 
     const counts = {};
@@ -988,7 +957,7 @@ function updateStats() {
       });
   }
 
-  // 🌎 DRILLDOWN
+  // 🌎 2. KONTINENS → ORSZÁG
   else if (statsMode === "continent-drill") {
 
     const countryCounts = {};
@@ -1004,9 +973,10 @@ function updateStats() {
       countryCounts[c] = (countryCounts[c] || 0) + 1;
     });
 
+    // 🔙 vissza
     const back = document.createElement("div");
     back.className = "stat-row";
-    back.innerHTML = "⬅️ Vissza";
+    back.innerHTML = "⬅️ Vissza kontinensekhez";
 
     back.onclick = () => {
       statsMode = "continent";
@@ -1028,7 +998,7 @@ function updateStats() {
         div.innerHTML = `
           <span>
             <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-            style="width:24px; height:18px; margin-right:6px;">
+            style="width:24px; margin-right:6px;">
             ${name}
           </span>
           <span>${count} db</span>
@@ -1036,11 +1006,7 @@ function updateStats() {
 
         div.onclick = () => {
           activeCountry = country;
-
-          banknotes = allBanknotes.filter(note =>
-            normalizeToEnglish(note.country) === country
-          );
-
+          statsMode = "country";
           renderBanknotes();
         };
 
@@ -1048,8 +1014,8 @@ function updateStats() {
       });
   }
 
-  // 🌎 COUNTRY MODE
-  else {
+  // 🌎 3. ORSZÁG SZINT
+  else if (statsMode === "country") {
 
     const countryCounts = {};
 
@@ -1059,6 +1025,19 @@ function updateStats() {
       const c = normalizeToEnglish(note.country);
       countryCounts[c] = (countryCounts[c] || 0) + 1;
     });
+
+    // 🔙 vissza
+    const back = document.createElement("div");
+    back.className = "stat-row";
+    back.innerHTML = "⬅️ Vissza";
+
+    back.onclick = () => {
+      statsMode = activeContinent ? "continent-drill" : "continent";
+      activeCountry = null;
+      renderBanknotes();
+    };
+
+    statsDiv.appendChild(back);
 
     Object.entries(countryCounts)
       .sort((a,b)=>b[1]-a[1])
@@ -1076,7 +1055,7 @@ function updateStats() {
         div.innerHTML = `
           <span>
             <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-            style="width:24px; height:18px; margin-right:6px;">
+            style="width:24px; margin-right:6px;">
             ${name}
           </span>
           <span>${count} db</span>
@@ -1101,8 +1080,7 @@ function updateStats() {
         statsDiv.appendChild(div);
       });
   }
-}
-    
+} 
 
 // TOTAL
 function updateTotal() {
