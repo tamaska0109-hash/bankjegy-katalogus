@@ -617,14 +617,21 @@ layer.on({
 });
 
 layer.on('click', function() {
-  const name = feature.properties.name;
+
+  const name = feature.properties.name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
   banknotes = allBanknotes.filter(note => {
     if (!note.country) return false;
 
-    const mapped = countryMap[note.country] || note.country;
+    const mapped = normalizeCountry(note.country);
     return mapped === name;
   });
+
+  renderBanknotes();
+});
 
   renderBanknotes();
 });
