@@ -451,6 +451,28 @@ function normalizeCountry(name) {
   return map[n] || n;
 }
 
+ function getCountryDisplay(name) {
+  if (!name) return "";
+
+  const n = name.toLowerCase();
+
+  const map = {
+    "hungary": { hu: "Magyarország", flag: "🇭🇺" },
+    "germany": { hu: "Németország", flag: "🇩🇪" },
+    "france": { hu: "Franciaország", flag: "🇫🇷" },
+    "italy": { hu: "Olaszország", flag: "🇮🇹" },
+    "spain": { hu: "Spanyolország", flag: "🇪🇸" },
+    "egypt": { hu: "Egyiptom", flag: "🇪🇬" },
+    "united states of america": { hu: "USA", flag: "🇺🇸" },
+    "united kingdom": { hu: "Egyesült Királyság", flag: "🇬🇧" },
+    "china": { hu: "Kína", flag: "🇨🇳" },
+    "japan": { hu: "Japán", flag: "🇯🇵" }
+  };
+
+  return map[n] || { hu: name, flag: "🏳️" };
+}
+    
+
   function updateTotal() {
 
   if (!isAdmin) {
@@ -492,7 +514,9 @@ let map;
   sorted.forEach(([country, count]) => {
     const div = document.createElement("div");
     div.className = "stat-row";
-    div.innerHTML = `<span>${country}</span><span>${count} db</span>`;
+    const display = getCountryDisplay(country);
+
+div.innerHTML = `<span>${display.flag} ${display.hu}</span><span>${count} db</span>`;
 
 div.style.cursor = "pointer";
 
@@ -596,7 +620,9 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
   const count = countryCount[name] || 0;
 
   if (count > 0) {
-    layer.bindPopup(`${name}: ${count} db`);
+    const display = getCountryDisplay(name.toLowerCase());
+
+layer.bindPopup(`${display.flag} ${display.hu}: ${count} db`);
   }
 
 layer.on({
