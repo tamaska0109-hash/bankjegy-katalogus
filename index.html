@@ -290,7 +290,6 @@ function normalizeCountry(name) {
 
   const n = normalizeCountry(name);
 
-  // leggyakoribb országok (gyors egyezés)
   const map = {
     "hungary": "hu",
     "magyarorszag": "hu",
@@ -298,17 +297,18 @@ function normalizeCountry(name) {
     "nemetorszag": "de",
     "austria": "at",
     "ausztria": "at",
-    "japan": "jp",
-    "china": "cn",
-    "france": "fr",
-    "spain": "es",
     "italy": "it",
+    "spain": "es",
+    "france": "fr",
+    "netherlands": "nl",
     "poland": "pl",
     "czechia": "cz",
     "slovakia": "sk",
     "romania": "ro",
     "croatia": "hr",
     "serbia": "rs",
+    "china": "cn",
+    "japan": "jp",
     "usa": "us",
     "united states of america": "us",
     "egyesult allamok": "us",
@@ -322,9 +322,9 @@ function normalizeCountry(name) {
     "greece": "gr"
   };
 
-  return map[n] || "";
-}    
-
+  return map[n] || "xx"; // 🔥 fallback
+}
+     
  // COUNTRYCODE    
  function getCountryCode(name) {
   const map = {
@@ -401,10 +401,11 @@ function renderBanknotes() {
       <img src="${note.img || 'https://via.placeholder.com/150'}">
       <h3>${note.name || ""}</h3>
       <p style="text-align:center;">
-  <img 
-    src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
-    style="width:28px; display:block; margin:0 auto 5px auto; border-radius:3px;"
-  >
+ <img 
+  src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
+  onerror="this.src='https://via.placeholder.com/24x18?text=?'"
+  style="width:28px; display:block; margin:0 auto 5px auto; border-radius:3px;"
+ >
   <span style="font-size:12px; color:#ccc;">
     ${note.country || ""}
   </span>
