@@ -201,6 +201,7 @@ h1 {
   <input id="nameInput" placeholder="Név">
   <input id="countryInput" placeholder="Ország">
   <input id="yearInput" placeholder="Év">
+  <input id="catalogInput" placeholder="Katalógusszám (pl. P-123)">
   <select id="conditionInput">
     <option value="UNC">UNC</option>
     <option value="AU">AU</option>
@@ -257,6 +258,7 @@ function renderBanknotes() {
   <img src="${note.img || 'https://via.placeholder.com/150'}">
   <h3>${note.name || "Nincs név"}</h3>
   <p>${note.country || "Ismeretlen ország"} • ${note.year || "-"}</p>
+  <p>Katalógus: ${note.catalog || "-"}</p>
   <p>💰 ${note.value || 0} €</p>
   <p>Állapot: ${note.condition || "-"}</p>
   <button onclick="deleteNote('${note.id}')">Törlés</button>
@@ -274,7 +276,8 @@ window.addBanknote = async function () {
     name: document.getElementById("nameInput").value || "Ismeretlen",
     country: document.getElementById("countryInput").value,
     year: parseInt(document.getElementById("yearInput").value),
-   condition: document.getElementById("conditionInput").value,
+    catalog: document.getElementById("catalogInput").value,
+    condition: document.getElementById("conditionInput").value,
     value: parseFloat(document.getElementById("valueInput").value),
     img: document.getElementById("imgInput").value
   };
