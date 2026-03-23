@@ -138,6 +138,15 @@ h1 {
   margin-bottom: 20px;
   border-radius: 10px;
 }
+
+.tooltip-style {
+  background: black;
+  color: gold;
+  border: 1px solid gold;
+  border-radius: 5px;
+  padding: 3px;
+  font-size: 12px;
+}
     
 </style>
 
@@ -376,8 +385,11 @@ countryCount[mapped] = (countryCount[mapped] || 0) + 1;
       const count = countryCount[name] || 0;
 
       if (count > 0) {
-        layer.bindPopup(`${name}: ${count} db`);
-      }
+        layer.bindTooltip(`${name}: ${count} db`, {
+  permanent: false,
+  direction: "center",
+  className: "tooltip-style"
+});
     }
   }).addTo(map);
 }
