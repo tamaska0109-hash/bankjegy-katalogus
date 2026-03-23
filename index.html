@@ -215,6 +215,7 @@ h1 {
     <option value="VF">VF</option>
   </select>
   <input id="valueInput" placeholder="Érték (€)">
+  <input id="purchaseInput" placeholder="Beszerzési ár (€)">  
   <input id="imgInput" placeholder="Kép link">
 
   <button onclick="addBanknote()">Hozzáadás</button>
@@ -268,6 +269,7 @@ function renderBanknotes() {
   <p>${note.country || "Ismeretlen ország"} • ${note.year || "-"}</p>
   <p>Katalógus: ${note.catalog || "-"}</p>
   <p>💰 ${note.value || 0} €</p>
+  ${isAdmin ? `<p>Beszerzés: ${note.purchase || 0} €</p>` : ""}
   <p>Állapot: ${note.condition || "-"}</p>
   ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
 `;
@@ -289,6 +291,7 @@ window.addBanknote = async function () {
     catalog: document.getElementById("catalogInput").value,
     condition: document.getElementById("conditionInput").value,
     value: parseFloat(document.getElementById("valueInput").value),
+    purchase: parseFloat(document.getElementById("purchaseInput").value),
     img: document.getElementById("imgInput").value
   };
 
