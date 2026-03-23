@@ -248,11 +248,11 @@ h1 {
 <div id="map">
 
   <div class="legend">
-    <div><span style="background:white"></span> 0 db</div>
-    <div><span style="background:#a8e6cf"></span> 1–5 db</div>
-    <div><span style="background:#56c596"></span> 6–20 db</div>
-    <div><span style="background:#2e8b57"></span> 20+ db</div>
-  </div>
+  <div><span style="background:#ffffff"></span> 0 db</div>
+  <div><span style="background:#fff3b0"></span> 1–5 db</div>
+  <div><span style="background:#ffa94d"></span> 6–20 db</div>
+  <div><span style="background:#ff8c00"></span> 20+ db</div>
+</div>
 
 </div>
     
@@ -694,15 +694,15 @@ function updateMap() {
 
       let fillColor = "transparent";
 
-      if (count > 0 && count <= 5) fillColor = "#fff3bf";
-      else if (count > 5 && count <= 20) fillColor = "#ffd43b";
-      else if (count > 20) fillColor = "#fab005";
+      if (count > 0 && count <= 5) fillColor = "#fff3b0";     // világos sárga
+      else if (count > 5 && count <= 20) fillColor = "#ffa94d"; // narancs
+      else if (count > 20) fillColor = "#ff8c00";              // erős narancs/arany
 
       return {
         color: "#cc3333",
         weight: 1,
         fillColor: fillColor,
-        fillOpacity: count > 0 ? 0.7 : 0
+        fillOpacity: count > 0 ? 0.8 : 0
       };
     },
 
