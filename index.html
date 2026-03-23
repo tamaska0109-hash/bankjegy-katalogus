@@ -826,7 +826,6 @@ function updateStats() {
   const statsDiv = document.getElementById("stats");
   statsDiv.innerHTML = "";
 
-  // 🌍 Kontinensek magyarul + ikon
   const iconMap = {
     "Europe": "🌍 Európa",
     "Asia": "🌏 Ázsia",
@@ -836,7 +835,7 @@ function updateStats() {
     "Other": "❓ Egyéb"
   };
 
-  // 🌍 TELJES continent map
+  // 🔥 FULL continentMap (EZ VOLT A HIÁNY)
   const continentMap = {
 
     // EUROPE
@@ -890,43 +889,23 @@ function updateStats() {
     "australia":"Oceania","new zealand":"Oceania"
   };
 
-  // 🇭🇺 Országnevek magyarul
   const countryHu = {
-    "hungary":"Magyarország",
-    "germany":"Németország",
-    "austria":"Ausztria",
-    "france":"Franciaország",
-    "spain":"Spanyolország",
-    "italy":"Olaszország",
-    "netherlands":"Hollandia",
-    "poland":"Lengyelország",
-    "czechia":"Csehország",
-    "slovakia":"Szlovákia",
-    "romania":"Románia",
-    "croatia":"Horvátország",
-    "serbia":"Szerbia",
-    "greece":"Görögország",
-    "turkey":"Törökország",
-    "china":"Kína",
-    "japan":"Japán",
-    "india":"India",
-    "usa":"USA",
+    "hungary":"Magyarország","germany":"Németország",
+    "austria":"Ausztria","france":"Franciaország",
+    "spain":"Spanyolország","italy":"Olaszország",
+    "china":"Kína","japan":"Japán","india":"India",
     "united states of america":"USA",
-    "canada":"Kanada",
-    "mexico":"Mexikó",
-    "brazil":"Brazília",
-    "argentina":"Argentína",
-    "egypt":"Egyiptom",
-    "south africa":"Dél-Afrika",
+    "brazil":"Brazília","argentina":"Argentína",
+    "egypt":"Egyiptom","south africa":"Dél-Afrika",
     "australia":"Ausztrália"
   };
 
-  // 🌍 1. CONTINENT NÉZET
+  // 🌍 CONTINENT (FULL)
   if (statsMode === "continent") {
 
     const counts = {};
 
-    banknotes.forEach(note => {
+    allBanknotes.forEach(note => {
       if (!note.country) return;
 
       const c = normalizeToEnglish(note.country);
@@ -950,6 +929,12 @@ function updateStats() {
         div.onclick = () => {
           activeContinent = continent;
           statsMode = "continent-drill";
+
+          banknotes = allBanknotes.filter(note => {
+            const c = normalizeToEnglish(note.country);
+            return (continentMap[c] || "Other") === continent;
+          });
+
           renderBanknotes();
         };
 
@@ -957,12 +942,12 @@ function updateStats() {
       });
   }
 
-  // 🌎 2. KONTINENS → ORSZÁG
+  // 🌎 DRILLDOWN (FULL ország lista)
   else if (statsMode === "continent-drill") {
 
-    const countryCounts = {};
+    const counts = {};
 
-    banknotes.forEach(note => {
+    allBanknotes.forEach(note => {
       if (!note.country) return;
 
       const c = normalizeToEnglish(note.country);
@@ -970,23 +955,23 @@ function updateStats() {
 
       if (cont !== activeContinent) return;
 
-      countryCounts[c] = (countryCounts[c] || 0) + 1;
+      counts[c] = (counts[c] || 0) + 1;
     });
 
-    // 🔙 vissza
     const back = document.createElement("div");
     back.className = "stat-row";
-    back.innerHTML = "⬅️ Vissza kontinensekhez";
+    back.innerHTML = "⬅️ Vissza";
 
     back.onclick = () => {
       statsMode = "continent";
       activeContinent = null;
+      banknotes = [...allBanknotes];
       renderBanknotes();
     };
 
     statsDiv.appendChild(back);
 
-    Object.entries(countryCounts)
+    Object.entries(counts)
       .sort((a,b)=>b[1]-a[1])
       .forEach(([country, count]) => {
 
@@ -1007,6 +992,11 @@ function updateStats() {
         div.onclick = () => {
           activeCountry = country;
           statsMode = "country";
+
+          banknotes = allBanknotes.filter(note =>
+            normalizeToEnglish(note.country) === country
+          );
+
           renderBanknotes();
         };
 
@@ -1014,19 +1004,18 @@ function updateStats() {
       });
   }
 
-  // 🌎 3. ORSZÁG SZINT
-  else if (statsMode === "country") {
+  // 🌎 COUNTRY MODE
+  else {
 
-    const countryCounts = {};
+    const counts = {};
 
-    banknotes.forEach(note => {
+    allBanknotes.forEach(note => {
       if (!note.country) return;
 
       const c = normalizeToEnglish(note.country);
-      countryCounts[c] = (countryCounts[c] || 0) + 1;
+      counts[c] = (counts[c] || 0) + 1;
     });
 
-    // 🔙 vissza
     const back = document.createElement("div");
     back.className = "stat-row";
     back.innerHTML = "⬅️ Vissza";
@@ -1034,12 +1023,22 @@ function updateStats() {
     back.onclick = () => {
       statsMode = activeContinent ? "continent-drill" : "continent";
       activeCountry = null;
+
+      if (activeContinent) {
+        banknotes = allBanknotes.filter(note => {
+          const c = normalizeToEnglish(note.country);
+          return (continentMap[c] || "Other") === activeContinent;
+        });
+      } else {
+        banknotes = [...allBanknotes];
+      }
+
       renderBanknotes();
     };
 
     statsDiv.appendChild(back);
 
-    Object.entries(countryCounts)
+    Object.entries(counts)
       .sort((a,b)=>b[1]-a[1])
       .forEach(([country, count]) => {
 
@@ -1061,26 +1060,10 @@ function updateStats() {
           <span>${count} db</span>
         `;
 
-        div.onclick = () => {
-
-          if (activeCountry === country) {
-            activeCountry = null;
-            banknotes = [...allBanknotes];
-          } else {
-            activeCountry = country;
-
-            banknotes = allBanknotes.filter(note =>
-              normalizeToEnglish(note.country) === country
-            );
-          }
-
-          renderBanknotes();
-        };
-
         statsDiv.appendChild(div);
       });
   }
-} 
+}
 
 // TOTAL
 function updateTotal() {
