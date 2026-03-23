@@ -175,8 +175,11 @@ h1 {
   <body>
 
    <h1>💰 Tamás Bankjegy Gyűjteménye</h1>
-   <button onclick="adminLogin()">🔐 Admin belépés</button>
-
+   <div class="top-bar">
+  <button onclick="adminLogin()">🔐 Admin belépés</button>
+  <button onclick="logout()">🚪 Kilépés</button>
+</div>
+    
     <h2 id="totalValue">Összérték: 0 €</h2>
 
     <h2>🌍 Gyűjtemény térkép</h2>
@@ -292,6 +295,11 @@ window.addBanknote = async function () {
   await addDoc(collection(db, "banknotes"), note);
 
   loadBanknotes();
+
+if (localStorage.getItem("isAdmin") === "true") {
+  isAdmin = true;
+}
+  
 };
 
 // 🗑️ Törlés
@@ -479,12 +487,23 @@ window.adminLogin = function() {
 
   if (password === "1234") {
     isAdmin = true;
+
+    localStorage.setItem("isAdmin", "true"); // 🔥 EZ AZ ÚJ
+
     alert("Admin mód aktiválva");
     renderBanknotes();
   } else {
     alert("Hibás jelszó");
   }
-};     
+};
+
+ window.logout = function() {
+  isAdmin = false;
+  localStorage.removeItem("isAdmin");
+
+  alert("Kijelentkeztél");
+  renderBanknotes();
+};    
      
 </script>
 
