@@ -1015,25 +1015,22 @@ window.resetFilter = function () {
   renderBanknotes();
 };
 
- window.filterByRange = function(range) {
+window.filterByRange = function(range) {
 
   activeLegend = range;
 
-  window.filterByRange = function(range) {
-
-  activeLegend = range;
-
-  // 🔥 törlés
+  // 🔥 minden legend törlése
   document.querySelectorAll(".legend div").forEach(el => {
     el.classList.remove("active-legend");
   });
 
-  // 🔥 kijelölés (FONTOS!)
-  const el = document.querySelector(`[onclick="filterByRange('${range}')"]`);
-  if (el) el.classList.add("active-legend");
+  // 🔥 aktuális kijelölés (piros highlight)
+  const selected = document.querySelector(`[onclick="filterByRange('${range}')"]`);
+  if (selected) selected.classList.add("active-legend");
 
   const countryCount = {};
 
+  // 🔥 országonkénti darabszám
   allBanknotes.forEach(note => {
     if (!note.country) return;
 
@@ -1041,7 +1038,10 @@ window.resetFilter = function () {
     countryCount[c] = (countryCount[c] || 0) + 1;
   });
 
+  // 🔥 szűrés
   banknotes = allBanknotes.filter(note => {
+
+    if (!note.country) return false;
 
     const c = normalizeToEnglish(note.country);
     const count = countryCount[c] || 0;
@@ -1055,7 +1055,7 @@ window.resetFilter = function () {
   });
 
   renderBanknotes();
-};    
+};
      
 // ADMIN
 window.adminLogin = function() {
