@@ -197,7 +197,8 @@ h1 {
   <button onclick="resetFilter()">Reset</button>
 </div>
 
-<div class="add-box">
+  <div class="add-box" id="addBox">
+    
   <h2>➕ Új bankjegy</h2>
 
   <input id="nameInput" placeholder="Név">
@@ -265,13 +266,15 @@ function renderBanknotes() {
   <p>Katalógus: ${note.catalog || "-"}</p>
   <p>💰 ${note.value || 0} €</p>
   <p>Állapot: ${note.condition || "-"}</p>
-  <button onclick="deleteNote('${note.id}')">Törlés</button>
+  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
 `;
 
     container.appendChild(div);
   });
   updateTotal();
   updateMap();
+
+  document.getElementById("addBox").style.display = isAdmin ? "block" : "none";
 }
 
 // ➕ Hozzáadás
@@ -351,6 +354,12 @@ window.resetFilter = function () {
 loadBanknotes();
 
   function updateTotal() {
+
+  if (!isAdmin) {
+    document.getElementById("totalValue").innerText = "Összérték: 🔒";
+    return;
+  }
+
   let total = 0;
 
   banknotes.forEach(note => {
@@ -359,8 +368,7 @@ loadBanknotes();
 
   document.getElementById("totalValue").innerText =
     "Összérték: " + total + " €";
-}   
-
+}
 let map;
 
 function initMap() {
