@@ -223,6 +223,22 @@ h1 {
 
 .stat-row.clicked {
   animation: pulse 0.3s ease;
+}  
+
+ .legend div {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.legend div:hover {
+  transform: scale(1.05);
+  background: rgba(255, 0, 0, 0.15); /* halvány piros */
+}
+
+.active-legend {
+  background: #ff4d4d !important; /* erős piros */
+  color: white;
+  font-weight: bold;
 }   
     
 </style>
@@ -992,12 +1008,28 @@ window.resetFilter = function () {
 
   activeLegend = null;
 
+  document.querySelectorAll(".legend div").forEach(el => {
+  el.classList.remove("active-legend");
+ });
+
   renderBanknotes();
 };
 
  window.filterByRange = function(range) {
 
   activeLegend = range;
+
+  window.filterByRange = function(range) {
+
+  activeLegend = range;
+
+  // 🔥 törlés
+  document.querySelectorAll(".legend div").forEach(el => {
+    el.classList.remove("active-legend");
+  });
+
+  // 🔥 kijelölés (FONTOS!)
+  event.currentTarget.classList.add("active-legend"); 
 
   const countryCount = {};
 
