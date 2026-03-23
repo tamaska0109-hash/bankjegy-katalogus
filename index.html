@@ -970,49 +970,7 @@ if (statsMode === "continent") {
 
 }
 
-      const div = document.createElement("div");
-      div.className = "stat-row";
-      div.dataset.continent = continent;
-
-      if (continent === activeContinent) {
-       div.classList.add("active-continent");
-  }
-
-    div.innerHTML = `
-  <span>
-    ${iconMap[continent]} ${continent}
-  </span>
-  <span>${count} db</span>
-`;
       
-     div.onclick = () => {
-
-  div.classList.add("clicked");
-
-  setTimeout(() => {
-  div.classList.remove("clicked");
-  }, 300);     
-
-  // 🔥 minden aktív törlése
-  document.querySelectorAll(".stat-row").forEach(el => {
-    el.classList.remove("active-continent");
-  });
-
-  // 🔥 aktuális kijelölése
-  div.classList.add("active-continent");
-  activeContinent = continent;     
-
-  // 🔥 szűrés
-  banknotes = allBanknotes.filter(note => {
-    const c = normalizeCountry(note.country);
-    const cont = continentMap[c] || "Other";
-    return cont === continent;
-  });
-
-  renderBanknotes();
-};
-
-      statsDiv.appendChild(div);
     });
 }
 
