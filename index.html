@@ -285,6 +285,40 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+ // COUNTRYCODE    
+ function getCountryCode(name) {
+  const map = {
+    "hungary": "hu",
+    "germany": "de",
+    "austria": "at",
+    "italy": "it",
+    "spain": "es",
+    "france": "fr",
+    "netherlands": "nl",
+    "poland": "pl",
+    "czechia": "cz",
+    "slovakia": "sk",
+    "romania": "ro",
+    "croatia": "hr",
+    "serbia": "rs",
+    "china": "cn",
+    "japan": "jp",
+    "united states of america": "us",
+    "canada": "ca",
+    "mexico": "mx",
+    "brazil": "br",
+    "argentina": "ar",
+    "australia": "au",
+    "egypt": "eg",
+    "turkey": "tr",
+    "greece": "gr"
+  };
+
+  const normalized = normalizeCountry(name);
+  return map[normalized] || "";
+}
+
+     
 // FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -326,7 +360,10 @@ function renderBanknotes() {
     div.innerHTML = `
       <img src="${note.img || 'https://via.placeholder.com/150'}">
       <h3>${note.name || ""}</h3>
-      <p>${note.country || ""} • ${note.year || ""}</p>
+      <p>
+       <img src="https://flagcdn.com/24x18/${getCountryCode(note.country)}.png">
+       ${note.country || ""} • ${note.year || ""}
+      </p>
       <p>Katalógus: ${note.catalog || "-"}</p>
 
       ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
