@@ -400,12 +400,19 @@ function renderBanknotes() {
     div.innerHTML = `
       <img src="${note.img || 'https://via.placeholder.com/150'}">
       <h3>${note.name || ""}</h3>
-      <p>
-       <img 
-        src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
-        style="width:20px; height:auto; vertical-align:middle; margin-right:6px; border-radius:2px;"
-       ${note.country || ""} • ${note.year || ""}
-      </p>
+      <p style="text-align:center;">
+  <img 
+    src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
+    style="width:28px; display:block; margin:0 auto 5px auto; border-radius:3px;"
+  >
+  <span style="font-size:12px; color:#ccc;">
+    ${note.country || ""}
+  </span>
+</p>
+
+<p style="margin-top:5px;">
+  ${note.year || ""}
+</p>
       <p>Katalógus: ${note.catalog || "-"}</p>
 
       ${isAdmin ? `<p>💰 ${note.value || 0} €</p>` : ""}
