@@ -191,6 +191,7 @@ h1 {
    <div class="top-bar">
   <input id="filterCountry" placeholder="Ország">
   <input id="filterYear" placeholder="Év">
+  <input id="filterCatalog" placeholder="Katalógusszám">  
   <button onclick="applyFilter()">Szűrés</button>
   <button onclick="resetFilter()">Reset</button>
 </div>
@@ -320,11 +321,13 @@ async function loadBanknotes() {
 window.applyFilter = function () {
   const country = document.getElementById("filterCountry").value.toLowerCase();
   const year = document.getElementById("filterYear").value;
+  const catalog = document.getElementById("filterCatalog").value.toLowerCase();
 
   banknotes = allBanknotes.filter(note => {
     return (
-      (!country || note.country.toLowerCase().includes(country)) &&
-      (!year || note.year == year)
+      (!country || (note.country && note.country.toLowerCase().includes(country))) &&
+      (!year || note.year == year) &&
+      (!catalog || (note.catalog && note.catalog.toLowerCase().includes(catalog)))
     );
   });
 
