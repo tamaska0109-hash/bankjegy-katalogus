@@ -215,6 +215,12 @@ h1 {
   font-weight: bold;
 }
 
+.active-country {
+  background: #ff4d4d;
+  color: white;
+  font-weight: bold;
+}
+    
  @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -328,7 +334,8 @@ let allBanknotes = [];
      
 let activeContinent = null;  
 let activeLegend = null; 
-let statsMode = "continent";     
+let statsMode = "continent"; 
+let activeCountry = null;     
 
 // ADMIN STATE
 if (localStorage.getItem("isAdmin") === "true") {
@@ -927,19 +934,41 @@ function updateStats() {
       .forEach(([country, count]) => {
 
         const div = document.createElement("div");
-        div.className = "stat-row";
+div.className = "stat-row";
 
-        div.innerHTML = `
-          <span>
-           <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-           style="width:22px; height:16px; object-fit:cover; border-radius:3px; margin-right:8px; vertical-align:middle; box-shadow:0 0 3px rgba(0,0,0,0.3);"
-            style="margin-right:6px; vertical-align:middle;">
-            ${country}
-          </span>
-          <span>${count} db</span>
-        `;
+// 🔥 aktív kiemelés
+if (country === activeCountry) {
+  div.classList.add("active-country");
+}
 
-        statsDiv.appendChild(div);
+div.innerHTML = `
+  <span>
+    <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
+    style="width:24px; height:18px; object-fit:cover; border-radius:2px; margin-right:6px; vertical-align:middle;">
+    ${country}
+  </span>
+  <span>${count} db</span>
+`;
+
+// 🔥 kattintás
+div.onclick = () => {
+
+  if (activeCountry === country) {
+    activeCountry = null;
+    banknotes = [...allBanknotes];
+  } else {
+    activeCountry = country;
+
+    banknotes = allBanknotes.filter(note => {
+      const c = normalizeToEnglish(note.country);
+      return c === country;
+    });
+  }
+
+  renderBanknotes();
+};
+
+statsDiv.appendChild(div);
       });
   }
 }
@@ -983,6 +1012,8 @@ window.resetFilter = function () {
   banknotes = [...allBanknotes];
 
   statsMode = "continent";
+
+  activeCountry = null;
 
   activeContinent = null; // 👈 EZ AZ ÚJ
 
