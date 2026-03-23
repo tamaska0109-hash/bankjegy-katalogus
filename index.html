@@ -248,10 +248,21 @@ h1 {
 <div id="map">
 
   <div class="legend">
-  <div><span style="background:#ffffff"></span> 0 db</div>
-  <div><span style="background:#fff3b0"></span> 1–5 db</div>
-  <div><span style="background:#ffa94d"></span> 6–20 db</div>
-  <div><span style="background:#ff8c00"></span> 20+ db</div>
+  <div onclick="filterByRange('0')">
+    <span style="background:#ffffff"></span> 0 db
+  </div>
+
+  <div onclick="filterByRange('1-5')">
+    <span style="background:#fff3b0"></span> 1–5 db
+  </div>
+
+  <div onclick="filterByRange('6-20')">
+    <span style="background:#ffa94d"></span> 6–20 db
+  </div>
+
+  <div onclick="filterByRange('20+')">
+    <span style="background:#ff8c00"></span> 20+ db
+  </div>
 </div>
 
 </div>
@@ -299,7 +310,8 @@ let map;
 let banknotes = [];
 let allBanknotes = [];
      
-let activeContinent = null;     
+let activeContinent = null;  
+let activeLegend = null;     
 
 // ADMIN STATE
 if (localStorage.getItem("isAdmin") === "true") {
@@ -978,8 +990,39 @@ window.resetFilter = function () {
 
   activeContinent = null; // 👈 EZ AZ ÚJ
 
+  activeLegend = null;
+
   renderBanknotes();
 };
+
+ window.filterByRange = function(range) {
+
+  activeLegend = range;
+
+  const countryCount = {};
+
+  allBanknotes.forEach(note => {
+    if (!note.country) return;
+
+    const c = normalizeToEnglish(note.country);
+    countryCount[c] = (countryCount[c] || 0) + 1;
+  });
+
+  banknotes = allBanknotes.filter(note => {
+
+    const c = normalizeToEnglish(note.country);
+    const count = countryCount[c] || 0;
+
+    if (range === "0") return count === 0;
+    if (range === "1-5") return count >= 1 && count <= 5;
+    if (range === "6-20") return count >= 6 && count <= 20;
+    if (range === "20+") return count > 20;
+
+    return true;
+  });
+
+  renderBanknotes();
+};    
      
 // ADMIN
 window.adminLogin = function() {
