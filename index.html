@@ -737,13 +737,7 @@ function renderBanknotes() {
     <h3>${note.name || ""}</h3>
 
     <div class="country">
-   <img src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png"
-style="
-  width:18px;
-  height:13px;
-  border-radius:2px;
-  box-shadow:0 0 2px rgba(0,0,0,0.2);
-">
+   <img class="flag" src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png">
    <span>${note.country || ""}</span>
  </div>
 
