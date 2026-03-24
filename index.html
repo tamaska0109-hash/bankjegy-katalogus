@@ -366,7 +366,9 @@ function normalizeToEnglish(name) {
 function buildCountryISOMap() {
   worldData.features.forEach(f => {
     const name = normalizeToEnglish(f.properties.name);
-    countryToISO[name] = f.id.toLowerCase();
+    countryToISO[name] = f.properties.iso_a2
+  ? f.properties.iso_a2.toLowerCase()
+  : "xx";
   });
 }  
 
