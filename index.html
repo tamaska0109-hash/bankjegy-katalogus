@@ -283,6 +283,21 @@ h1 {
   transform: scale(1.05);
 }
 
+ .value-high {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.value-mid {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.value-low {
+  color: #e74c3c;
+  font-weight: bold;
+} 
+
 </style>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -727,7 +742,13 @@ function renderBanknotes() {
 
     ${isAdmin ? `
       <p>💰 Beszerzés: ${note.purchase || "-"} €</p>
-      <p>📈 Érték: ${note.value || "-"} €</p>
+      <p class="${
+  note.value > 100 ? 'value-high' :
+  note.value > 20 ? 'value-mid' :
+  'value-low'
+}">
+  📈 Érték: ${note.value || "-"} €
+</p>
       <button class="delete-btn">
         Törlés
       </button>
