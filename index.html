@@ -654,11 +654,21 @@ function renderBanknotes() {
 
   <h3>${note.name || ""}</h3>
 
-  <p style="display:flex; align-items:center; justify-content:center; gap:6px;">
-    <img src="https://flagcdn.com/w40/${getFlagCode(note.country)}.png"
-     style="width:28px; height:auto; border-radius:2px;">
+  <p style="
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:15px;
+  color:#ddd;
+">
+  <img src="https://flagcdn.com/w40/${getFlagCode(note.country)}.png"
+  style="width:26px; border-radius:3px;">
+
+  <span style="font-weight:600;">
     ${note.country || ""}
-  </p>
+  </span>
+</p>
 
   <p>${note.catalog || note.catalogInput || ""}</p>
   <p>${note.condition || ""}</p>
