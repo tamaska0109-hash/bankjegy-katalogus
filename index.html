@@ -618,7 +618,7 @@ function renderBanknotes() {
     ${note.country || ""}
   </p>
 
-  <p>${note.catalog || ""}</p>
+  <p>${note.catalog || note.catalogInput || ""}</p>
   <p>${note.condition || ""}</p>
 
   ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
