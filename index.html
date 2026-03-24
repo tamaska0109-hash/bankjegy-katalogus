@@ -351,15 +351,49 @@ function normalizeCountry(name) {
 
 // TO ENGLISH
 function normalizeToEnglish(name) {
+  const n = normalizeCountry(name);
+
   const map = {
+    // ALAPOK
     "magyarorszag":"hungary",
     "nemetorszag":"germany",
     "ausztria":"austria",
     "kina":"china",
     "usa":"united states of america",
-    "egyesult allamok":"united states of america"
+    "egyesult allamok":"united states of america",
+
+    // 🔥 PROBLÉMÁSOK (amiket láttunk)
+    "egyiptom":"egypt",
+    "ausztralia":"australia",
+    "brazilia":"brazil",
+
+    // 🔥 gyakori magyar nevek
+    "lengyelorszag":"poland",
+    "csehorszag":"czechia",
+    "szlovakia":"slovakia",
+    "romania":"romania",
+    "görögorszag":"greece",
+    "torokorszag":"turkey",
+    "spanyolorszag":"spain",
+    "olaszorszag":"italy",
+    "franciaorszag":"france",
+    "hollandia":"netherlands",
+    "svajc":"switzerland",
+    "svajc":"switzerland",
+    "svedorszag":"sweden",
+    "norvegia":"norway",
+    "finnorszag":"finland",
+    "dania":"denmark",
+
+    // AFRIKA
+    "delafrika":"south africa",
+
+    // AMERIKA
+    "kanada":"canada",
+    "mexiko":"mexico"
   };
-  return map[normalizeCountry(name)] || normalizeCountry(name);
+
+  return map[n] || n;
 }
 
 // 🌍 FULL CONTINENT MAP (EZ VOLT A HIÁNYZÓ!)
