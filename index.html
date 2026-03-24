@@ -137,8 +137,12 @@ h1 {
 
 /* hover effekt (szürke, nem arany) */
 .card:hover .card-inner {
-  transform: scale(1.03);
   box-shadow: 0 10px 30px rgba(100,100,100,0.3);
+}
+
+/* 🔥 FONTOS: csak akkor scale ha nincs flip */
+.card:not(.flipped):hover .card-inner {
+  transform: scale(1.03);
 }
 
 /* ===== KÁRTYA TARTALOM ===== */
