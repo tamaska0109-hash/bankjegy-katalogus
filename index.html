@@ -429,40 +429,77 @@ function getFlagCode(name) {
   const n = normalizeToEnglish(name);
 
   const isoMap = {
-    "hungary": "hu",
-    "austria": "at",
-    "germany": "de",
-    "france": "fr",
-    "spain": "es",
-    "italy": "it",
-    "united states of america": "us",
-    "united states": "us",
-    "united kingdom": "gb",
-    "china": "cn",
-    "japan": "jp",
-    "india": "in",
-    "brazil": "br",
-    "argentina": "ar",
-    "egypt": "eg",
-    "turkey": "tr",
-    "poland": "pl",
-    "romania": "ro",
-    "bulgaria": "bg",
-    "croatia": "hr",
-    "serbia": "rs",
-    "slovakia": "sk",
-    "czechia": "cz",
-    "netherlands": "nl",
-    "belgium": "be",
-    "switzerland": "ch",
-    "sweden": "se",
-    "norway": "no",
-    "finland": "fi",
-    "denmark": "dk",
-    "ukraine": "ua",
-    "canada": "ca",
-    "mexico": "mx",
-    "australia": "au"
+
+    // AFRICA – TELJES
+"algeria":"dz","angola":"ao","benin":"bj","botswana":"bw","burkina faso":"bf",
+"burundi":"bi","cape verde":"cv","central african republic":"cf","chad":"td",
+"comoros":"km","congo":"cg","democratic republic of the congo":"cd",
+"djibouti":"dj","egypt":"eg","equatorial guinea":"gq","eritrea":"er",
+"eswatini":"sz","ethiopia":"et","gabon":"ga","gambia":"gm","ghana":"gh",
+"guinea":"gn","guinea-bissau":"gw","ivory coast":"ci","cote d'ivoire":"ci",
+"kenya":"ke","lesotho":"ls","liberia":"lr","libya":"ly","madagascar":"mg",
+"malawi":"mw","mali":"ml","mauritania":"mr","mauritius":"mu","morocco":"ma",
+"mozambique":"mz","namibia":"na","niger":"ne","nigeria":"ng","rwanda":"rw",
+"sao tome and principe":"st","senegal":"sn","seychelles":"sc","sierra leone":"sl",
+"somalia":"so","south africa":"za","south sudan":"ss","sudan":"sd",
+"tanzania":"tz","togo":"tg","tunisia":"tn","uganda":"ug","zambia":"zm",
+"zimbabwe":"zw",
+
+// AMERICA – TELJES
+
+// ÉSZAK-AMERIKA
+"canada":"ca","united states":"us","united states of america":"us","mexico":"mx",
+
+// KÖZÉP-AMERIKA
+"belize":"bz","costa rica":"cr","el salvador":"sv","guatemala":"gt",
+"honduras":"hn","nicaragua":"ni","panama":"pa",
+
+// KARIB TÉRSÉG
+"antigua and barbuda":"ag","bahamas":"bs","barbados":"bb","cuba":"cu",
+"dominica":"dm","dominican republic":"do","grenada":"gd","haiti":"ht",
+"jamaica":"jm","saint kitts and nevis":"kn","saint lucia":"lc",
+"saint vincent and the grenadines":"vc","trinidad and tobago":"tt",
+
+// DÉL-AMERIKA
+"argentina":"ar","bolivia":"bo","brazil":"br","chile":"cl","colombia":"co",
+"ecuador":"ec","guyana":"gy","paraguay":"py","peru":"pe","suriname":"sr",
+"uruguay":"uy","venezuela":"ve",
+  
+// ASIA – TELJES
+"afghanistan":"af","armenia":"am","azerbaijan":"az","bahrain":"bh",
+"bangladesh":"bd","bhutan":"bt","brunei":"bn","cambodia":"kh",
+"china":"cn","georgia":"ge","india":"in","indonesia":"id",
+"iran":"ir","iraq":"iq","israel":"il","japan":"jp","jordan":"jo",
+"kazakhstan":"kz","kuwait":"kw","kyrgyzstan":"kg","laos":"la",
+"lebanon":"lb","malaysia":"my","maldives":"mv","mongolia":"mn",
+"myanmar":"mm","nepal":"np","north korea":"kp","oman":"om",
+"pakistan":"pk","philippines":"ph","qatar":"qa","saudi arabia":"sa",
+"singapore":"sg","south korea":"kr","sri lanka":"lk","syria":"sy",
+"tajikistan":"tj","thailand":"th","timor-leste":"tl","east timor":"tl",
+"turkmenistan":"tm","united arab emirates":"ae","uzbekistan":"uz",
+"vietnam":"vn","yemen":"ye","turkey":"tr",
+
+// EXTRA (gyakran használt területek)
+"hong kong":"hk","taiwan":"tw","palestine":"ps",
+    
+// OCEANIA – TELJES
+"australia":"au","new zealand":"nz","fiji":"fj","papua new guinea":"pg",
+"solomon islands":"sb","vanuatu":"vu","samoa":"ws","tonga":"to",
+"kiribati":"ki","tuvalu":"tv","nauru":"nr","palau":"pw",
+"marshall islands":"mh","micronesia":"fm",
+
+ // EUROPE – TELJES
+"albania":"al","andorra":"ad","austria":"at","belarus":"by","belgium":"be",
+"bosnia and herzegovina":"ba","bulgaria":"bg","croatia":"hr","cyprus":"cy",
+"czechia":"cz","denmark":"dk","estonia":"ee","finland":"fi","france":"fr",
+"germany":"de","greece":"gr","hungary":"hu","iceland":"is","ireland":"ie",
+"italy":"it","kosovo":"xk","latvia":"lv","liechtenstein":"li","lithuania":"lt",
+"luxembourg":"lu","malta":"mt","moldova":"md","monaco":"mc","montenegro":"me",
+"netherlands":"nl","north macedonia":"mk","norway":"no","poland":"pl",
+"portugal":"pt","romania":"ro","san marino":"sm","serbia":"rs","slovakia":"sk",
+"slovenia":"si","spain":"es","sweden":"se","switzerland":"ch","ukraine":"ua",
+"united kingdom":"gb","vatican":"va","greenland":"gl",   
+    
   };
 
   return isoMap[n] || "xx";
