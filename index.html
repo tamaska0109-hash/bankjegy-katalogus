@@ -437,7 +437,12 @@ window.continentMap = {
 // FLAG
 function getFlagCode(name) {
   const n = normalizeToEnglish(name);
-  return countryToISO[n] || "xx";
+
+  // speciális esetek
+  if (n === "united states of america") return "us";
+  if (n === "united kingdom") return "gb";
+
+  return n;
 }
 
 // FIREBASE
@@ -721,7 +726,7 @@ function updateStats() {
 
         div.innerHTML = `
           <span>
-            <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
+            <img src="https://flagsapi.com/${getFlagCode(country).toUpperCase()}/flat/24.png"
             style="width:24px; margin-right:6px;">
             ${name}
           </span>
