@@ -680,43 +680,42 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-  <img src="${note.img || ''}">
+<div class="card-inner">
 
-  <h3>${note.name || ""}</h3>
+  <!-- ELŐLAP -->
+  <div class="card-front">
+    
+    <img src="${note.img || ''}">
 
-  <div style="
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  margin:6px 0;
-">
+    <h3>${note.name || ""}</h3>
 
-  <img src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png"
-  style="
-    width:20px;
-    height:15px;
-    object-fit:cover;
-    border-radius:2px;
-    display:block;
-  ">
+    <div style="display:flex; justify-content:center; gap:6px; margin:5px 0;">
+      <img src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png"
+      style="width:20px; height:15px;">
+      <span>${note.country || ""}</span>
+    </div>
 
-  <span style="
-    font-size:15px;
-    font-weight:600;
-    color:#ddd;
-  ">
-    ${note.country || ""}
-  </span>
+    <p>${note.year || ""}</p>
+    <p>${note.catalog || ""}</p>
+    <p>${note.condition || ""}</p>
+
+  </div>
+
+  <!-- HÁTLAP -->
+  <div class="card-back">
+
+    <img src="${note.backImg || note.img || ''}">
+
+    <p>💰 Beszerzés: ${note.purchase || "-"} €</p>
+    <p>📈 Érték: ${note.value || "-"} €</p>
+
+    ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+
+  </div>
 
 </div>
-
-  <p>${note.catalog || note.catalogInput || ""}</p>
-  <p>${note.condition || ""}</p>
-
-  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
 `;
-
+    
     container.appendChild(div);
   });
 
