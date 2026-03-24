@@ -609,8 +609,16 @@ function renderBanknotes() {
 
     div.innerHTML = `
   <img src="${note.img || ''}">
+
   <h3>${note.name || ""}</h3>
-  <p>${note.country || ""}</p>
+
+  <p style="display:flex; align-items:center; justify-content:center; gap:6px;">
+    <img src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png">
+    ${note.country || ""}
+  </p>
+
+  <p>${note.catalog || ""}</p>
+  <p>${note.condition || ""}</p>
 
   ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
 `;
