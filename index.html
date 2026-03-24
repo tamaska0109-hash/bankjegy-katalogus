@@ -426,8 +426,46 @@ window.continentMap = {
 
 // FLAG
 function getFlagCode(name) {
-  const n = normalizeCountry(name);
-  return n.slice(0,2);
+  const n = normalizeToEnglish(name);
+
+  const isoMap = {
+    "hungary": "hu",
+    "austria": "at",
+    "germany": "de",
+    "france": "fr",
+    "spain": "es",
+    "italy": "it",
+    "united states of america": "us",
+    "united states": "us",
+    "united kingdom": "gb",
+    "china": "cn",
+    "japan": "jp",
+    "india": "in",
+    "brazil": "br",
+    "argentina": "ar",
+    "egypt": "eg",
+    "turkey": "tr",
+    "poland": "pl",
+    "romania": "ro",
+    "bulgaria": "bg",
+    "croatia": "hr",
+    "serbia": "rs",
+    "slovakia": "sk",
+    "czechia": "cz",
+    "netherlands": "nl",
+    "belgium": "be",
+    "switzerland": "ch",
+    "sweden": "se",
+    "norway": "no",
+    "finland": "fi",
+    "denmark": "dk",
+    "ukraine": "ua",
+    "canada": "ca",
+    "mexico": "mx",
+    "australia": "au"
+  };
+
+  return isoMap[n] || "xx";
 }
   
 // FIREBASE
