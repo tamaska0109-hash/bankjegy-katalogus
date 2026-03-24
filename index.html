@@ -535,52 +535,135 @@ function updateStats() {
   const statsDiv = document.getElementById("stats");
   statsDiv.innerHTML = "";
 
+  const iconMap = {
+    "Europe": "🌍 Európa",
+    "Asia": "🌏 Ázsia",
+    "America": "🌎 Amerika",
+    "Africa": "🌍 Afrika",
+    "Oceania": "🌏 Óceánia",
+    "Other": "❓ Egyéb"
+  };
+
+  // 🌍 CONTINENT NÉZET
   if (statsMode === "continent") {
 
     const counts = {};
 
-    allBanknotes.forEach(n => {
-      const cont = continentMap[normalizeToEnglish(n.country)] || "Other";
-      counts[cont] = (counts[cont] || 0) + 1;
+    allBanknotes.forEach(note => {
+      if (!note.country) return;
+
+      const c = normalizeToEnglish(note.country);
+      const continent = continentMap[c] || "Other";
+
+      counts[continent] = (counts[continent] || 0) + 1;
     });
 
-    Object.entries(counts).forEach(([cont, count]) => {
+    Object.entries(counts)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(([continent, count]) => {
 
-      const div = document.createElement("div");
-      div.className = "stat-row";
-      div.innerText = cont + " (" + count + ")";
+        const div = document.createElement("div");
+        div.className = "stat-row";
 
-      div.onclick = () => {
-        activeContinent = cont;
-        statsMode = "country";
+        div.innerHTML = `
+          <span>${iconMap[continent]}</span>
+          <span>${count} db</span>
+        `;
 
-        banknotes = allBanknotes.filter(n =>
-          (continentMap[normalizeToEnglish(n.country)] || "Other") === cont
-        );
+        // 👉 KATT → DRILLDOWN
+        div.onclick = () => {
+          statsMode = "continent-drill";
+          activeContinent = continent;
+          activeCountry = null;
 
-        renderBanknotes();
-      };
+          banknotes = allBanknotes.filter(note => {
+            const c = normalizeToEnglish(note.country);
+            return (continentMap[c] || "Other") === continent;
+          });
 
-      statsDiv.appendChild(div);
-    });
+          renderBanknotes();
+        };
 
-  } else {
+        statsDiv.appendChild(div);
+      });
+
+  }
+
+  // 🌎 ORSZÁG NÉZET (DRILLDOWN)
+  else if (statsMode === "continent-drill") {
+
+    // 🔙 VISSZA GOMB
+    const back = document.createElement("div");
+    back.className = "stat-row";
+    back.innerHTML = "⬅️ Vissza";
+
+    back.onclick = () => {
+      statsMode = "continent";
+      activeContinent = null;
+      activeCountry = null;
+      banknotes = [...allBanknotes];
+      renderBanknotes();
+    };
+
+    statsDiv.appendChild(back);
 
     const counts = {};
 
-    banknotes.forEach(n => {
-      const c = normalizeToEnglish(n.country);
+    allBanknotes.forEach(note => {
+      if (!note.country) return;
+
+      const c = normalizeToEnglish(note.country);
+
+      if ((continentMap[c] || "Other") !== activeContinent) return;
+
       counts[c] = (counts[c] || 0) + 1;
     });
 
-    Object.entries(counts).forEach(([country, count]) => {
+    Object.entries(counts)
+      .sort((a,b)=>b[1]-a[1])
+      .forEach(([country, count]) => {
 
-      const div = document.createElement("div");
-      div.className = "stat-row";
-      div.innerText = country + " (" + count + ")";
+        const div = document.createElement("div");
+        div.className = "stat-row";
 
-      statsDiv.appendChild(div);
-    });
+        if (country === activeCountry) {
+          div.classList.add("active-country");
+        }
+
+        div.innerHTML = `
+          <span>
+            <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
+            style="width:24px; margin-right:6px;">
+            ${country}
+          </span>
+          <span>${count} db</span>
+        `;
+
+        // 👉 ORSZÁG SZŰRÉS
+        div.onclick = () => {
+
+          if (activeCountry === country) {
+            activeCountry = null;
+
+            banknotes = allBanknotes.filter(note => {
+              const c = normalizeToEnglish(note.country);
+              return (continentMap[c] || "Other") === activeContinent;
+            });
+
+          } else {
+            activeCountry = country;
+
+            banknotes = allBanknotes.filter(note => {
+              const c = normalizeToEnglish(note.country);
+              return c === country;
+            });
+          }
+
+          renderBanknotes();
+        };
+
+        statsDiv.appendChild(div);
+      });
   }
 }
 
