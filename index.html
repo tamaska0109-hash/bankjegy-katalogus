@@ -5,7 +5,10 @@
 <meta charset="UTF-8">
 <title>Tamás Gyűjteménye</title>
 
-  <style>
+<script src="https://cdn.jsdelivr.net/npm/i18n-iso-countries@7.2.0/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18n-iso-countries@7.2.0/langs/en.json"></script>
+
+<style>
 
 .top-bar {
   display: flex;
@@ -326,6 +329,8 @@ h1 {
 
 <script type="module">
 
+countries.registerLocale(i18nIsoCountriesLangs.en);  
+
 let isAdmin = false;
 let worldData = null;
 let map;
@@ -437,12 +442,8 @@ window.continentMap = {
 // FLAG
 function getFlagCode(name) {
   const n = normalizeToEnglish(name);
-
-  // speciális esetek
-  if (n === "united states of america") return "us";
-  if (n === "united kingdom") return "gb";
-
-  return n;
+  const code = countries.getAlpha2Code(n, 'en');
+  return code ? code.toLowerCase() : "xx";
 }
 
 // FIREBASE
