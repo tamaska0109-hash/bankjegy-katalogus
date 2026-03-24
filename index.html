@@ -716,7 +716,9 @@ function renderBanknotes() {
     </div>
 
     <p>${note.year || ""}</p>
-    <p>${note.catalog || ""}</p>
+    <div class="catalog">
+    ${note.catalog ? `[${note.catalog}]` : ""}
+  </div>
     <div class="badge badge-${note.condition || ''}">
     ${note.condition || ""}
   </div>
