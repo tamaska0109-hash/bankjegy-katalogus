@@ -298,6 +298,24 @@ h1 {
   font-weight: bold;
 } 
 
+ .note-image {
+  background: #fafafa;
+  padding: 8px;
+  border-radius: 10px;
+
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+
+  transition: 0.3s;
+}
+
+/* hover effect */
+.card:hover .note-image {
+  transform: scale(1.02);
+  box-shadow:
+    inset 0 0 5px rgba(0,0,0,0.1),
+    0 8px 20px rgba(0,0,0,0.15);
+} 
+
 </style>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
