@@ -328,6 +328,48 @@ h1 {
 
 let isAdmin = false;
 
+// ADD BANKNOTE  
+window.addBanknote = async function() {
+
+  const name = document.getElementById("nameInput").value;
+  const country = document.getElementById("countryInput").value;
+  const year = document.getElementById("yearInput").value;
+  const catalog = document.getElementById("catalogInput").value;
+  const condition = document.getElementById("conditionInput").value;
+  const value = document.getElementById("valueInput").value;
+  const purchase = document.getElementById("purchaseInput").value;
+  const img = document.getElementById("imgInput").value;
+
+  if (!name || !country) {
+    alert("Adj meg nevet és országot!");
+    return;
+  }
+
+  await addDoc(collection(db, "banknotes"), {
+    name,
+    country,
+    year,
+    catalog,
+    condition,
+    value,
+    purchase,
+    img
+  });
+
+  alert("Hozzáadva!");
+
+  // INPUT RESET
+  document.getElementById("nameInput").value = "";
+  document.getElementById("countryInput").value = "";
+  document.getElementById("yearInput").value = "";
+  document.getElementById("catalogInput").value = "";
+  document.getElementById("valueInput").value = "";
+  document.getElementById("purchaseInput").value = "";
+  document.getElementById("imgInput").value = "";
+
+  loadBanknotes();
+};  
+
 // ADMIN LOGIN
 window.adminLogin = function() {
   const password = prompt("Admin jelszó:");
