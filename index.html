@@ -482,45 +482,73 @@ function renderBanknotes() {
 function updateMap() {
   if (!map || !worldData) return;
 
+  // 🔥 régi layer-ek törlése
   map.eachLayer(layer => {
     if (layer.feature) map.removeLayer(layer);
   });
 
-  const counts = {};
+  const countryCount = {};
 
-  allBanknotes.forEach(note => {
+  // 🔥 ország darabszám
+  banknotes.forEach(note => {
+    if (!note.country) return;
+
     const c = normalizeToEnglish(note.country);
-    counts[c] = (counts[c] || 0) + 1;
+    countryCount[c] = (countryCount[c] || 0) + 1;
   });
 
   L.geoJSON(worldData, {
 
+    // 🔥 SZÍNEZÉS
     style: function(feature) {
+
       const name = normalizeToEnglish(feature.properties.name);
-      const count = counts[name] || 0;
+      const count = countryCount[name] || 0;
 
       let fillColor = "transparent";
+
       if (count > 0 && count <= 5) fillColor = "#fff3b0";
       else if (count > 5 && count <= 20) fillColor = "#ffa94d";
       else if (count > 20) fillColor = "#ff8c00";
 
       return {
-        color:"#cc3333",
-        weight:1,
-        fillColor:fillColor,
-        fillOpacity:count ? 0.8 : 0
+        color: "#cc3333",
+        weight: 1,
+        fillColor: fillColor,
+        fillOpacity: count > 0 ? 0.8 : 0
       };
     },
 
+    // 🔥 INTERAKCIÓ
     onEachFeature: function(feature, layer) {
+
       const name = normalizeToEnglish(feature.properties.name);
+      const count = countryCount[name] || 0;
 
+      if (count > 0) {
+        layer.bindPopup(`${feature.properties.name}: ${count} db`);
+      }
+
+      layer.on({
+        mouseover: e => e.target.setStyle({ weight: 3, color: "#ff4444" }),
+        mouseout: e => e.target.setStyle({ weight: 1, color: "#cc3333" })
+      });
+
+      // 🔥 KATTINTÁS
       layer.on('click', function() {
-        statsMode = "country";
 
-        banknotes = allBanknotes.filter(n =>
-          normalizeToEnglish(n.country) === name
-        );
+        statsMode = "country";
+        activeCountry = null;
+        activeContinent = null;
+
+        const mapName = normalizeToEnglish(feature.properties.name);
+
+        banknotes = allBanknotes.filter(note => {
+          if (!note.country) return false;
+
+          const c = normalizeToEnglish(note.country);
+          return c === mapName;
+        });
 
         renderBanknotes();
       });
