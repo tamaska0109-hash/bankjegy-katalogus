@@ -715,6 +715,10 @@ function renderBanknotes() {
 
 </div>
 `;
+
+   div.onclick = () => {
+   div.classList.toggle("flipped");
+   };
     
     container.appendChild(div);
   });
