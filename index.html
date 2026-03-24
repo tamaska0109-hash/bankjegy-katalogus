@@ -327,6 +327,31 @@ h1 {
 <script type="module"> 
 
 let isAdmin = false;
+
+// ADMIN LOGIN
+window.adminLogin = function() {
+  const password = prompt("Admin jelszó:");
+
+  if (password === "1234") { // 🔥 ezt majd átírhatod
+    isAdmin = true;
+    localStorage.setItem("isAdmin", "true");
+    alert("Admin mód aktiválva");
+
+    renderBanknotes(); // frissítés
+  } else {
+    alert("Hibás jelszó");
+  }
+};
+
+// LOGOUT
+window.logout = function() {
+  isAdmin = false;
+  localStorage.setItem("isAdmin", "false");
+  alert("Kilépve");
+
+  renderBanknotes(); // frissítés
+};
+  
 let worldData = null;
 let map;
 let banknotes = [];
