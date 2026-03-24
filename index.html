@@ -613,7 +613,8 @@ function renderBanknotes() {
   <h3>${note.name || ""}</h3>
 
   <p style="display:flex; align-items:center; justify-content:center; gap:6px;">
-    <img src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png">
+    <img src="https://flagcdn.com/24x18/${getFlagCode(note.country)}.png"
+    style="width:24px; height:auto;">
     ${note.country || ""}
   </p>
 
