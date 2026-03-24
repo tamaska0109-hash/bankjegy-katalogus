@@ -600,16 +600,31 @@ function renderBanknotes() {
     div.className = "card";
 
     div.innerHTML = `
-      <img src="${note.img || ''}">
-      <h3>${note.name || ""}</h3>
-      <p>${note.country || ""}</p>
-    `;
+  <img src="${note.img || ''}">
+  <h3>${note.name || ""}</h3>
+  <p>${note.country || ""}</p>
+
+  ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
+`;
 
     container.appendChild(div);
   });
 
   updateMap();
   updateStats();
+
+// ADMIN UI KEZELÉS
+const addBox = document.getElementById("addBox");
+const total = document.getElementById("totalValue");
+
+if (isAdmin) {
+  addBox.style.display = "block";
+  total.style.display = "block";
+} else {
+  addBox.style.display = "none";
+  total.style.display = "none";
+}
+  
 }
 
 // MAP
