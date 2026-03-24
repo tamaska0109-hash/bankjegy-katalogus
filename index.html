@@ -331,13 +331,12 @@ let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
-    
-let activeContinent = null;  
-let activeLegend = null;
-let statsMode = "continent-drill";
-let activeCountry = null;    
 
-// ADMIN STATE
+let activeContinent = null;
+let activeCountry = null;
+let statsMode = "continent";
+
+// ADMIN
 if (localStorage.getItem("isAdmin") === "true") {
   isAdmin = true;
 }
@@ -350,39 +349,23 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-// TOENGLISH  
+// TO ENGLISH
 function normalizeToEnglish(name) {
-
   const map = {
-
-    "magyarorszag": "hungary",
-    "nemetorszag": "germany",
-    "ausztria": "austria",
-    "olaszorszag": "italy",
-    "spanyolorszag": "spain",
-    "franciaorszag": "france",
-    "hollandia": "netherlands",
-    "lengyelorszag": "poland",
-    "csehorszag": "czechia",
-    "szlovakia": "slovakia",
-    "romania": "romania",
-    "horvatorszag": "croatia",
-    "szerbia": "serbia",
-    "gorogorszag": "greece",
-    "torokorszag": "turkey",
-    "kina": "china",
-    "japan": "japan",
-
-    "usa": "united states of america",
-    "egyesult allamok": "united states of america"
+    "magyarorszag":"hungary",
+    "nemetorszag":"germany",
+    "ausztria":"austria",
+    "kina":"china",
+    "usa":"united states of america",
+    "egyesult allamok":"united states of america"
   };
-
-  const n = normalizeCountry(name);
-
-  return map[n] || n;
+  return map[normalizeCountry(name)] || normalizeCountry(name);
 }
 
+// 🌍 FULL CONTINENT MAP (EZ VOLT A HIÁNYZÓ!)
 window.continentMap = {
+
+  // EUROPE
   "albania":"Europe","andorra":"Europe","austria":"Europe","belarus":"Europe",
   "belgium":"Europe","bosnia and herzegovina":"Europe","bulgaria":"Europe",
   "croatia":"Europe","cyprus":"Europe","czechia":"Europe","denmark":"Europe",
@@ -396,6 +379,7 @@ window.continentMap = {
   "spain":"Europe","sweden":"Europe","switzerland":"Europe","ukraine":"Europe",
   "united kingdom":"Europe","vatican":"Europe",
 
+  // ASIA
   "afghanistan":"Asia","armenia":"Asia","azerbaijan":"Asia","bahrain":"Asia",
   "bangladesh":"Asia","bhutan":"Asia","brunei":"Asia","cambodia":"Asia",
   "china":"Asia","georgia":"Asia","india":"Asia","indonesia":"Asia",
@@ -409,6 +393,7 @@ window.continentMap = {
   "united arab emirates":"Asia","uzbekistan":"Asia",
   "vietnam":"Asia","yemen":"Asia","turkey":"Asia",
 
+  // AMERICA
   "argentina":"America","bahamas":"America","barbados":"America","belize":"America",
   "bolivia":"America","brazil":"America","canada":"America","chile":"America",
   "colombia":"America","costa rica":"America","cuba":"America",
@@ -419,6 +404,7 @@ window.continentMap = {
   "united states":"America","united states of america":"America",
   "uruguay":"America","venezuela":"America",
 
+  // AFRICA
   "algeria":"Africa","angola":"Africa","benin":"Africa","botswana":"Africa",
   "burkina faso":"Africa","burundi":"Africa","cameroon":"Africa",
   "central african republic":"Africa","chad":"Africa","congo":"Africa",
@@ -430,6 +416,7 @@ window.continentMap = {
   "south africa":"Africa","sudan":"Africa","tanzania":"Africa",
   "tunisia":"Africa","uganda":"Africa","zambia":"Africa","zimbabwe":"Africa",
 
+  // OCEANIA
   "australia":"Oceania","fiji":"Oceania","kiribati":"Oceania",
   "marshall islands":"Oceania","micronesia":"Oceania","nauru":"Oceania",
   "new zealand":"Oceania","palau":"Oceania","papua new guinea":"Oceania",
@@ -437,19 +424,10 @@ window.continentMap = {
   "tuvalu":"Oceania","vanuatu":"Oceania"
 };
 
-// FLAGCODE
+// FLAG
 function getFlagCode(name) {
-
   const n = normalizeCountry(name);
-
-  const map = {
-    "hungary":"hu","germany":"de","austria":"at",
-    "china":"cn","japan":"jp",
-    "united states of america":"us",
-    "brazil":"br","australia":"au","egypt":"eg"
-  };
-
-  return map[n] || "";
+  return n.slice(0,2);
 }
 
 // FIREBASE
@@ -476,10 +454,7 @@ async function loadWorldMap() {
 // MAP INIT
 function initMap() {
   map = L.map('map').setView([20, 0], 2);
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 }
 
 // RENDER
@@ -494,7 +469,6 @@ function renderBanknotes() {
       <img src="${note.img || ''}">
       <h3>${note.name || ""}</h3>
       <p>${note.country || ""}</p>
-      <p>${note.year || ""}</p>
     `;
 
     container.appendChild(div);
@@ -504,7 +478,7 @@ function renderBanknotes() {
   updateStats();
 }
 
-// MAP UPDATE
+// MAP
 function updateMap() {
   if (!map || !worldData) return;
 
@@ -522,34 +496,30 @@ function updateMap() {
   L.geoJSON(worldData, {
 
     style: function(feature) {
-
       const name = normalizeToEnglish(feature.properties.name);
       const count = counts[name] || 0;
 
       let fillColor = "transparent";
-
       if (count > 0 && count <= 5) fillColor = "#fff3b0";
       else if (count > 5 && count <= 20) fillColor = "#ffa94d";
       else if (count > 20) fillColor = "#ff8c00";
 
       return {
-        color: "#cc3333",
-        weight: 1,
-        fillColor: fillColor,
-        fillOpacity: count > 0 ? 0.8 : 0
+        color:"#cc3333",
+        weight:1,
+        fillColor:fillColor,
+        fillOpacity:count ? 0.8 : 0
       };
     },
 
     onEachFeature: function(feature, layer) {
-
       const name = normalizeToEnglish(feature.properties.name);
 
       layer.on('click', function() {
+        statsMode = "country";
 
-        activeCountry = name;
-
-        banknotes = allBanknotes.filter(note =>
-          normalizeToEnglish(note.country) === name
+        banknotes = allBanknotes.filter(n =>
+          normalizeToEnglish(n.country) === name
         );
 
         renderBanknotes();
@@ -565,29 +535,57 @@ function updateStats() {
   const statsDiv = document.getElementById("stats");
   statsDiv.innerHTML = "";
 
-  const counts = {};
+  if (statsMode === "continent") {
 
-  allBanknotes.forEach(note => {
-    const c = normalizeToEnglish(note.country);
-    const cont = continentMap[c] || "Other";
+    const counts = {};
 
-    counts[cont] = (counts[cont] || 0) + 1;
-  });
+    allBanknotes.forEach(n => {
+      const cont = continentMap[normalizeToEnglish(n.country)] || "Other";
+      counts[cont] = (counts[cont] || 0) + 1;
+    });
 
-  Object.entries(counts).forEach(([continent, count]) => {
+    Object.entries(counts).forEach(([cont, count]) => {
 
-    const div = document.createElement("div");
-    div.className = "stat-row";
+      const div = document.createElement("div");
+      div.className = "stat-row";
+      div.innerText = cont + " (" + count + ")";
 
-    div.innerText = continent + " (" + count + ")";
+      div.onclick = () => {
+        activeContinent = cont;
+        statsMode = "country";
 
-    statsDiv.appendChild(div);
-  });
+        banknotes = allBanknotes.filter(n =>
+          (continentMap[normalizeToEnglish(n.country)] || "Other") === cont
+        );
+
+        renderBanknotes();
+      };
+
+      statsDiv.appendChild(div);
+    });
+
+  } else {
+
+    const counts = {};
+
+    banknotes.forEach(n => {
+      const c = normalizeToEnglish(n.country);
+      counts[c] = (counts[c] || 0) + 1;
+    });
+
+    Object.entries(counts).forEach(([country, count]) => {
+
+      const div = document.createElement("div");
+      div.className = "stat-row";
+      div.innerText = country + " (" + count + ")";
+
+      statsDiv.appendChild(div);
+    });
+  }
 }
 
 // LOAD
 async function loadBanknotes() {
-
   const snap = await getDocs(collection(db, "banknotes"));
 
   banknotes = [];
