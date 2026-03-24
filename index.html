@@ -441,31 +441,10 @@ window.continentMap = {
 
 // FLAG
 function getFlagCode(name) {
-  const n = normalizeToEnglish(name);
-
-  if (!window.isoMap) window.isoMap = {};
-
-  if (window.isoMap[n]) {
-    return window.isoMap[n];
-  }
-
-  let guess = n.slice(0,2);
-
-  const fixes = {
-    "germany": "de",
-    "united states": "us",
-    "united states of america": "us",
-    "united kingdom": "gb",
-    "japan": "jp",
-    "china": "cn"
-  };
-
-  const code = fixes[n] || guess;
-
-  window.isoMap[n] = code;
-
-  return code;
+  const n = normalizeCountry(name);
+  return n.slice(0,2);
 }
+  
 // FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
