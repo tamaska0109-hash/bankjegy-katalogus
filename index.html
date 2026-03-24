@@ -708,14 +708,19 @@ function renderBanknotes() {
   <!-- HÁTLAP -->
   <div class="card-back">
 
-    <img src="${note.backImg || note.img || ''}">
+  <img src="${note.backImg || note.img || ''}">
 
+  ${isAdmin ? `
     <p>💰 Beszerzés: ${note.purchase || "-"} €</p>
     <p>📈 Érték: ${note.value || "-"} €</p>
+    <button onclick="event.stopPropagation(); deleteNote('${note.id}')">
+      Törlés
+    </button>
+  ` : `
+    <p style="color:#888;">🔒 Csak admin láthatja az adatokat</p>
+  `}
 
-    ${isAdmin ? `<button onclick="deleteNote('${note.id}')">Törlés</button>` : ""}
-
-  </div>
+</div>
 
 </div>
 `;
