@@ -331,6 +331,7 @@ let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
+let countryToISO = {};  
 
 let activeContinent = null;
 let activeCountry = null;
@@ -361,6 +362,13 @@ function normalizeToEnglish(name) {
   };
   return map[normalizeCountry(name)] || normalizeCountry(name);
 }
+// ISO MAP
+function buildCountryISOMap() {
+  worldData.features.forEach(f => {
+    const name = normalizeToEnglish(f.properties.name);
+    countryToISO[name] = f.id.toLowerCase();
+  });
+}  
 
 // 🌍 FULL CONTINENT MAP (EZ VOLT A HIÁNYZÓ!)
 window.continentMap = {
@@ -426,8 +434,8 @@ window.continentMap = {
 
 // FLAG
 function getFlagCode(name) {
-  const n = normalizeCountry(name);
-  return n.slice(0,2);
+  const n = normalizeToEnglish(name);
+  return countryToISO[n] || "xx";
 }
 
 // FIREBASE
@@ -768,6 +776,7 @@ async function loadBanknotes() {
 
 // INIT
 await loadWorldMap();
+buildCountryISOMap ();  
 initMap();
 loadBanknotes();
 
