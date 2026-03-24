@@ -736,17 +736,16 @@ function renderBanknotes() {
 
     <h3>${note.name || ""}</h3>
 
-    <div style="display:flex; justify-content:center; gap:6px; margin:5px 0;">
-      <img src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png"
-      style="width:20px; height:15px;">
-      <span>${note.country || ""}</span>
-    </div>
+    <div class="country">
+   <img src="https://flagcdn.com/20x15/${getFlagCode(note.country)}.png"
+   style="width:18px; height:13px;">
+   <span>${note.country || ""}</span>
+ </div>
 
-    <p>${note.year || ""}</p>
+ <div class="year">${note.year || ""}</div>
     <div class="catalog">
     ${note.catalog ? `[${note.catalog}]` : note.catalogInput ? `[${note.catalogInput}]` : ""}
  </div>
-
     <div class="badge badge-${note.condition || ''}">
     ${note.condition || ""}
   </div>
