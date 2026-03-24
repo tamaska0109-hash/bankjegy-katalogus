@@ -343,6 +343,14 @@ window.adminLogin = function() {
   }
 };
 
+  window.deleteNote = async function(id) {
+  if (!confirm("Biztos törlöd?")) return;
+
+  await deleteDoc(doc(db, "banknotes", id));
+
+  loadBanknotes(); // frissítés
+};
+
 // LOGOUT
 window.logout = function() {
   isAdmin = false;
