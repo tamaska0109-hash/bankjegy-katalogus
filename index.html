@@ -331,13 +331,13 @@ let worldData = null;
 let map;
 let banknotes = [];
 let allBanknotes = [];
-
-let activeContinent = null;
+    
+let activeContinent = null;  
 let activeLegend = null;
-let statsMode = "continent"; // 🔥 FIX
-let activeCountry = null;
+let statsMode = "continent-drill";
+let activeCountry = null;    
 
-// ADMIN
+// ADMIN STATE
 if (localStorage.getItem("isAdmin") === "true") {
   isAdmin = true;
 }
@@ -350,27 +350,105 @@ function normalizeCountry(name) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-// TO ENGLISH
+// TOENGLISH  
 function normalizeToEnglish(name) {
+
   const map = {
-    "magyarorszag":"hungary",
-    "nemetorszag":"germany",
-    "ausztria":"austria",
-    "kina":"china",
-    "usa":"united states of america",
-    "egyesult allamok":"united states of america"
+
+    "magyarorszag": "hungary",
+    "nemetorszag": "germany",
+    "ausztria": "austria",
+    "olaszorszag": "italy",
+    "spanyolorszag": "spain",
+    "franciaorszag": "france",
+    "hollandia": "netherlands",
+    "lengyelorszag": "poland",
+    "csehorszag": "czechia",
+    "szlovakia": "slovakia",
+    "romania": "romania",
+    "horvatorszag": "croatia",
+    "szerbia": "serbia",
+    "gorogorszag": "greece",
+    "torokorszag": "turkey",
+    "kina": "china",
+    "japan": "japan",
+
+    "usa": "united states of america",
+    "egyesult allamok": "united states of america"
   };
+
   const n = normalizeCountry(name);
+
   return map[n] || n;
 }
 
-// 🌍 CONTINENT MAP (A TE FULL LISTÁD – megtartva)
-window.continentMap = { ... }; // 👉 EZ MARAD A TIÉD, NEM VÁLTOZTATTAM
+window.continentMap = {
+  "albania":"Europe","andorra":"Europe","austria":"Europe","belarus":"Europe",
+  "belgium":"Europe","bosnia and herzegovina":"Europe","bulgaria":"Europe",
+  "croatia":"Europe","cyprus":"Europe","czechia":"Europe","denmark":"Europe",
+  "estonia":"Europe","finland":"Europe","france":"Europe","germany":"Europe",
+  "greece":"Europe","hungary":"Europe","iceland":"Europe","ireland":"Europe",
+  "italy":"Europe","kosovo":"Europe","latvia":"Europe","liechtenstein":"Europe",
+  "lithuania":"Europe","luxembourg":"Europe","malta":"Europe","moldova":"Europe",
+  "monaco":"Europe","montenegro":"Europe","netherlands":"Europe","north macedonia":"Europe",
+  "norway":"Europe","poland":"Europe","portugal":"Europe","romania":"Europe",
+  "san marino":"Europe","serbia":"Europe","slovakia":"Europe","slovenia":"Europe",
+  "spain":"Europe","sweden":"Europe","switzerland":"Europe","ukraine":"Europe",
+  "united kingdom":"Europe","vatican":"Europe",
 
-// FLAG (A TE VERZIÓD – marad)
+  "afghanistan":"Asia","armenia":"Asia","azerbaijan":"Asia","bahrain":"Asia",
+  "bangladesh":"Asia","bhutan":"Asia","brunei":"Asia","cambodia":"Asia",
+  "china":"Asia","georgia":"Asia","india":"Asia","indonesia":"Asia",
+  "iran":"Asia","iraq":"Asia","israel":"Asia","japan":"Asia","jordan":"Asia",
+  "kazakhstan":"Asia","kuwait":"Asia","kyrgyzstan":"Asia","laos":"Asia",
+  "lebanon":"Asia","malaysia":"Asia","maldives":"Asia","mongolia":"Asia",
+  "myanmar":"Asia","nepal":"Asia","north korea":"Asia","oman":"Asia",
+  "pakistan":"Asia","philippines":"Asia","qatar":"Asia","saudi arabia":"Asia",
+  "singapore":"Asia","south korea":"Asia","sri lanka":"Asia","syria":"Asia",
+  "tajikistan":"Asia","thailand":"Asia","turkmenistan":"Asia",
+  "united arab emirates":"Asia","uzbekistan":"Asia",
+  "vietnam":"Asia","yemen":"Asia","turkey":"Asia",
+
+  "argentina":"America","bahamas":"America","barbados":"America","belize":"America",
+  "bolivia":"America","brazil":"America","canada":"America","chile":"America",
+  "colombia":"America","costa rica":"America","cuba":"America",
+  "dominican republic":"America","ecuador":"America","guatemala":"America",
+  "guyana":"America","haiti":"America","honduras":"America","jamaica":"America",
+  "mexico":"America","nicaragua":"America","panama":"America","paraguay":"America",
+  "peru":"America","suriname":"America","trinidad and tobago":"America",
+  "united states":"America","united states of america":"America",
+  "uruguay":"America","venezuela":"America",
+
+  "algeria":"Africa","angola":"Africa","benin":"Africa","botswana":"Africa",
+  "burkina faso":"Africa","burundi":"Africa","cameroon":"Africa",
+  "central african republic":"Africa","chad":"Africa","congo":"Africa",
+  "democratic republic of the congo":"Africa","egypt":"Africa",
+  "ethiopia":"Africa","ghana":"Africa","kenya":"Africa","libya":"Africa",
+  "madagascar":"Africa","malawi":"Africa","mali":"Africa","morocco":"Africa",
+  "mozambique":"Africa","namibia":"Africa","niger":"Africa","nigeria":"Africa",
+  "rwanda":"Africa","senegal":"Africa","somalia":"Africa",
+  "south africa":"Africa","sudan":"Africa","tanzania":"Africa",
+  "tunisia":"Africa","uganda":"Africa","zambia":"Africa","zimbabwe":"Africa",
+
+  "australia":"Oceania","fiji":"Oceania","kiribati":"Oceania",
+  "marshall islands":"Oceania","micronesia":"Oceania","nauru":"Oceania",
+  "new zealand":"Oceania","palau":"Oceania","papua new guinea":"Oceania",
+  "samoa":"Oceania","solomon islands":"Oceania","tonga":"Oceania",
+  "tuvalu":"Oceania","vanuatu":"Oceania"
+};
+
+// FLAGCODE
 function getFlagCode(name) {
+
   const n = normalizeCountry(name);
-  const map = { /* marad a teljes verziód */ };
+
+  const map = {
+    "hungary":"hu","germany":"de","austria":"at",
+    "china":"cn","japan":"jp",
+    "united states of america":"us",
+    "brazil":"br","australia":"au","egypt":"eg"
+  };
+
   return map[n] || "";
 }
 
@@ -398,7 +476,10 @@ async function loadWorldMap() {
 // MAP INIT
 function initMap() {
   map = L.map('map').setView([20, 0], 2);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 }
 
 // RENDER
@@ -423,7 +504,7 @@ function renderBanknotes() {
   updateStats();
 }
 
-// MAP UPDATE (🔥 JAVÍTVA)
+// MAP UPDATE
 function updateMap() {
   if (!map || !worldData) return;
 
@@ -451,24 +532,11 @@ function updateMap() {
       else if (count > 5 && count <= 20) fillColor = "#ffa94d";
       else if (count > 20) fillColor = "#ff8c00";
 
-      // 🌍 kontinens halványítás
-      if (activeContinent) {
-        const cont = continentMap[name] || "Other";
-        if (cont !== activeContinent) {
-          return { color:"#333", fillColor:"#111", fillOpacity:0.1 };
-        }
-      }
-
-      // 🔥 ország highlight
-      if (activeCountry === name) {
-        return { color:"red", weight:3, fillColor:fillColor, fillOpacity:1 };
-      }
-
       return {
-        color:"#cc3333",
-        weight:1,
-        fillColor:fillColor,
-        fillOpacity:count ? 0.8 : 0
+        color: "#cc3333",
+        weight: 1,
+        fillColor: fillColor,
+        fillOpacity: count > 0 ? 0.8 : 0
       };
     },
 
@@ -479,11 +547,9 @@ function updateMap() {
       layer.on('click', function() {
 
         activeCountry = name;
-        activeContinent = continentMap[name] || null;
-        statsMode = "continent-drill";
 
-        banknotes = allBanknotes.filter(n =>
-          normalizeToEnglish(n.country) === name
+        banknotes = allBanknotes.filter(note =>
+          normalizeToEnglish(note.country) === name
         );
 
         renderBanknotes();
@@ -493,108 +559,35 @@ function updateMap() {
   }).addTo(map);
 }
 
-// STATS (🔥 JAVÍTVA)
+// STATS
 function updateStats() {
 
   const statsDiv = document.getElementById("stats");
   statsDiv.innerHTML = "";
 
-  const iconMap = {
-    "Europe":"🌍 Európa",
-    "Asia":"🌏 Ázsia",
-    "America":"🌎 Amerika",
-    "Africa":"🌍 Afrika",
-    "Oceania":"🌏 Óceánia",
-    "Other":"❓ Egyéb"
-  };
+  const counts = {};
 
-  if (statsMode === "continent") {
+  allBanknotes.forEach(note => {
+    const c = normalizeToEnglish(note.country);
+    const cont = continentMap[c] || "Other";
 
-    const counts = {};
+    counts[cont] = (counts[cont] || 0) + 1;
+  });
 
-    allBanknotes.forEach(n => {
-      const c = normalizeToEnglish(n.country);
-      const cont = continentMap[c] || "Other";
-      counts[cont] = (counts[cont] || 0) + 1;
-    });
+  Object.entries(counts).forEach(([continent, count]) => {
 
-    Object.entries(counts).forEach(([cont, count]) => {
+    const div = document.createElement("div");
+    div.className = "stat-row";
 
-      const div = document.createElement("div");
-      div.className = "stat-row";
-      div.innerHTML = `<span>${iconMap[cont]}</span><span>${count} db</span>`;
+    div.innerText = continent + " (" + count + ")";
 
-      div.onclick = () => {
-        activeContinent = cont;
-        statsMode = "continent-drill";
-        activeCountry = null;
-
-        banknotes = allBanknotes.filter(n =>
-          (continentMap[normalizeToEnglish(n.country)] || "Other") === cont
-        );
-
-        renderBanknotes();
-      };
-
-      statsDiv.appendChild(div);
-    });
-
-  } else {
-
-    const counts = {};
-
-    allBanknotes.forEach(n => {
-      const c = normalizeToEnglish(n.country);
-      if ((continentMap[c] || "Other") !== activeContinent) return;
-      counts[c] = (counts[c] || 0) + 1;
-    });
-
-    const back = document.createElement("div");
-    back.className = "stat-row";
-    back.innerHTML = "⬅️ Vissza";
-
-    back.onclick = () => {
-      statsMode = "continent";
-      activeContinent = null;
-      activeCountry = null;
-      banknotes = [...allBanknotes];
-      renderBanknotes();
-    };
-
-    statsDiv.appendChild(back);
-
-    Object.entries(counts).forEach(([country, count]) => {
-
-      const div = document.createElement("div");
-      div.className = "stat-row";
-
-      div.innerHTML = `
-        <span>
-          <img src="https://flagcdn.com/24x18/${getFlagCode(country)}.png"
-          style="width:24px; margin-right:6px;">
-          ${country}
-        </span>
-        <span>${count} db</span>
-      `;
-
-      div.onclick = () => {
-
-        activeCountry = country;
-
-        banknotes = allBanknotes.filter(n =>
-          normalizeToEnglish(n.country) === country
-        );
-
-        renderBanknotes();
-      };
-
-      statsDiv.appendChild(div);
-    });
-  }
+    statsDiv.appendChild(div);
+  });
 }
 
 // LOAD
 async function loadBanknotes() {
+
   const snap = await getDocs(collection(db, "banknotes"));
 
   banknotes = [];
@@ -615,7 +608,6 @@ initMap();
 loadBanknotes();
 
 </script>
-
  </body>
 </html>
 :::
